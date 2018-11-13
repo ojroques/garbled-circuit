@@ -1,0 +1,38 @@
+
+{ "+": "yao garbled circuit tests, naranker dulay 2018",
+
+  "circuits" : [
+
+  { "name": "1-bit full adder Cin, A, B -> Sum, Cout",
+    "alice": [1, 2],
+    "bob":   [3],
+    "out":   [5, 11],
+    "gates": [ 
+      { "id":4,  "type":"XOR", "in": [2, 3] },
+      { "id":5,  "type":"XOR", "in": [1, 4] }, 
+      { "id":6,  "type":"AND", "in": [2, 3] },
+      { "id":7,  "type":"AND", "in": [1, 4] },
+      { "id":11, "type":"OR",  "in": [6, 7] }
+    ]
+  },
+
+  { "name": "2-bit full adder Cin, A0, B0, A1, B1 -> Sum0, Sum1, Cout",
+    "alice": [1, 2, 12],
+    "bob":   [3, 13],
+    "out":   [5, 18, 15],
+    "gates": [ 
+      { "id":4,  "type":"XOR", "in": [2, 3] },
+      { "id":5,  "type":"XOR", "in": [1, 4] }, 
+      { "id":6,  "type":"AND", "in": [2, 3] },
+      { "id":7,  "type":"AND", "in": [1, 4] },
+      { "id":11, "type":"OR",  "in": [6, 7] },
+      { "id":14, "type":"XOR", "in": [12, 13] },
+      { "id":15, "type":"XOR", "in": [11, 14] },
+      { "id":16, "type":"AND", "in": [12, 13] },
+      { "id":17, "type":"AND", "in": [11, 14] },
+      { "id":18, "type":"OR",  "in": [16, 17] }
+    ]
+  }
+
+] } 
+

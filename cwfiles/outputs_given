@@ -1,0 +1,224 @@
+python3 main.py alice	 json/f.bool.json
+
+======= AND gate =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[3] = 0 
+  Alice[1] = 0  Bob[2] = 1   Outputs[3] = 0 
+  Alice[1] = 1  Bob[2] = 0   Outputs[3] = 0 
+  Alice[1] = 1  Bob[2] = 1   Outputs[3] = 1 
+
+======= OR gate =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[3] = 0 
+  Alice[1] = 0  Bob[2] = 1   Outputs[3] = 1 
+  Alice[1] = 1  Bob[2] = 0   Outputs[3] = 1 
+  Alice[1] = 1  Bob[2] = 1   Outputs[3] = 1 
+
+======= NOT gate =======
+  Alice[1] = 0  Bob[] =   Outputs[2] = 1 
+  Alice[1] = 1  Bob[] =   Outputs[2] = 0 
+
+======= XOR gate =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[3] = 0 
+  Alice[1] = 0  Bob[2] = 1   Outputs[3] = 1 
+  Alice[1] = 1  Bob[2] = 0   Outputs[3] = 1 
+  Alice[1] = 1  Bob[2] = 1   Outputs[3] = 0 
+
+======= OR gate =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[3] = 0 
+  Alice[1] = 0  Bob[2] = 1   Outputs[3] = 1 
+  Alice[1] = 1  Bob[2] = 0   Outputs[3] = 1 
+  Alice[1] = 1  Bob[2] = 1   Outputs[3] = 1 
+
+======= NOR gate =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[3] = 1 
+  Alice[1] = 0  Bob[2] = 1   Outputs[3] = 0 
+  Alice[1] = 1  Bob[2] = 0   Outputs[3] = 0 
+  Alice[1] = 1  Bob[2] = 1   Outputs[3] = 0 
+
+======= NAND gate =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[3] = 1 
+  Alice[1] = 0  Bob[2] = 1   Outputs[3] = 1 
+  Alice[1] = 1  Bob[2] = 0   Outputs[3] = 1 
+  Alice[1] = 1  Bob[2] = 1   Outputs[3] = 0 
+
+======= XNOR gate =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[3] = 1 
+  Alice[1] = 0  Bob[2] = 1   Outputs[3] = 0 
+  Alice[1] = 1  Bob[2] = 0   Outputs[3] = 0 
+  Alice[1] = 1  Bob[2] = 1   Outputs[3] = 1 
+
+======= A implies B =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[4] = 1 
+  Alice[1] = 0  Bob[2] = 1   Outputs[4] = 1 
+  Alice[1] = 1  Bob[2] = 0   Outputs[4] = 0 
+  Alice[1] = 1  Bob[2] = 1   Outputs[4] = 1 
+
+======= AA' complement =======
+  Alice[1] = 0  Bob[] =   Outputs[3] = 0 
+  Alice[1] = 1  Bob[] =   Outputs[3] = 0 
+
+======= A+A' complement =======
+  Alice[1] = 0  Bob[] =   Outputs[3] = 1 
+  Alice[1] = 1  Bob[] =   Outputs[3] = 1 
+
+python3 main.py alice	 json/f.nand.json
+
+======= NOT using NAND =======
+  Alice[1] = 0  Bob[] =   Outputs[2] = 1 
+  Alice[1] = 1  Bob[] =   Outputs[2] = 0 
+
+======= AND using NAND =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[4] = 0 
+  Alice[1] = 0  Bob[2] = 1   Outputs[4] = 0 
+  Alice[1] = 1  Bob[2] = 0   Outputs[4] = 0 
+  Alice[1] = 1  Bob[2] = 1   Outputs[4] = 1 
+
+======= OR using NAND =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[5] = 0 
+  Alice[1] = 0  Bob[2] = 1   Outputs[5] = 1 
+  Alice[1] = 1  Bob[2] = 0   Outputs[5] = 1 
+  Alice[1] = 1  Bob[2] = 1   Outputs[5] = 1 
+
+======= NOR using NAND =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[6] = 1 
+  Alice[1] = 0  Bob[2] = 1   Outputs[6] = 0 
+  Alice[1] = 1  Bob[2] = 0   Outputs[6] = 0 
+  Alice[1] = 1  Bob[2] = 1   Outputs[6] = 0 
+
+======= XOR using NAND =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[6] = 0 
+  Alice[1] = 0  Bob[2] = 1   Outputs[6] = 1 
+  Alice[1] = 1  Bob[2] = 0   Outputs[6] = 1 
+  Alice[1] = 1  Bob[2] = 1   Outputs[6] = 0 
+
+======= XNOR using NAND =======
+  Alice[1] = 0  Bob[2] = 0   Outputs[7] = 1 
+  Alice[1] = 0  Bob[2] = 1   Outputs[7] = 0 
+  Alice[1] = 1  Bob[2] = 0   Outputs[7] = 0 
+  Alice[1] = 1  Bob[2] = 1   Outputs[7] = 1 
+
+python3 main.py alice	 json/f.add.json
+
+======= 1-bit full adder Cin, A, B -> Sum, Cout =======
+  Alice[1, 2] = 0 0  Bob[3] = 0   Outputs[5, 11] = 0 0 
+  Alice[1, 2] = 0 0  Bob[3] = 1   Outputs[5, 11] = 1 0 
+  Alice[1, 2] = 0 1  Bob[3] = 0   Outputs[5, 11] = 1 0 
+  Alice[1, 2] = 0 1  Bob[3] = 1   Outputs[5, 11] = 0 1 
+  Alice[1, 2] = 1 0  Bob[3] = 0   Outputs[5, 11] = 1 0 
+  Alice[1, 2] = 1 0  Bob[3] = 1   Outputs[5, 11] = 0 1 
+  Alice[1, 2] = 1 1  Bob[3] = 0   Outputs[5, 11] = 0 1 
+  Alice[1, 2] = 1 1  Bob[3] = 1   Outputs[5, 11] = 1 1 
+
+======= 2-bit full adder Cin, A0, B0, A1, B1 -> Sum0, Sum1, Cout =======
+  Alice[1, 2, 12] = 0 0 0  Bob[3, 13] = 0 0   Outputs[5, 18, 15] = 0 0 0 
+  Alice[1, 2, 12] = 0 0 0  Bob[3, 13] = 0 1   Outputs[5, 18, 15] = 0 0 1 
+  Alice[1, 2, 12] = 0 0 0  Bob[3, 13] = 1 0   Outputs[5, 18, 15] = 1 0 0 
+  Alice[1, 2, 12] = 0 0 0  Bob[3, 13] = 1 1   Outputs[5, 18, 15] = 1 0 1 
+  Alice[1, 2, 12] = 0 0 1  Bob[3, 13] = 0 0   Outputs[5, 18, 15] = 0 0 1 
+  Alice[1, 2, 12] = 0 0 1  Bob[3, 13] = 0 1   Outputs[5, 18, 15] = 0 1 0 
+  Alice[1, 2, 12] = 0 0 1  Bob[3, 13] = 1 0   Outputs[5, 18, 15] = 1 0 1 
+  Alice[1, 2, 12] = 0 0 1  Bob[3, 13] = 1 1   Outputs[5, 18, 15] = 1 1 0 
+  Alice[1, 2, 12] = 0 1 0  Bob[3, 13] = 0 0   Outputs[5, 18, 15] = 1 0 0 
+  Alice[1, 2, 12] = 0 1 0  Bob[3, 13] = 0 1   Outputs[5, 18, 15] = 1 0 1 
+  Alice[1, 2, 12] = 0 1 0  Bob[3, 13] = 1 0   Outputs[5, 18, 15] = 0 0 1 
+  Alice[1, 2, 12] = 0 1 0  Bob[3, 13] = 1 1   Outputs[5, 18, 15] = 0 1 0 
+  Alice[1, 2, 12] = 0 1 1  Bob[3, 13] = 0 0   Outputs[5, 18, 15] = 1 0 1 
+  Alice[1, 2, 12] = 0 1 1  Bob[3, 13] = 0 1   Outputs[5, 18, 15] = 1 1 0 
+  Alice[1, 2, 12] = 0 1 1  Bob[3, 13] = 1 0   Outputs[5, 18, 15] = 0 1 0 
+  Alice[1, 2, 12] = 0 1 1  Bob[3, 13] = 1 1   Outputs[5, 18, 15] = 0 1 1 
+  Alice[1, 2, 12] = 1 0 0  Bob[3, 13] = 0 0   Outputs[5, 18, 15] = 1 0 0 
+  Alice[1, 2, 12] = 1 0 0  Bob[3, 13] = 0 1   Outputs[5, 18, 15] = 1 0 1 
+  Alice[1, 2, 12] = 1 0 0  Bob[3, 13] = 1 0   Outputs[5, 18, 15] = 0 0 1 
+  Alice[1, 2, 12] = 1 0 0  Bob[3, 13] = 1 1   Outputs[5, 18, 15] = 0 1 0 
+  Alice[1, 2, 12] = 1 0 1  Bob[3, 13] = 0 0   Outputs[5, 18, 15] = 1 0 1 
+  Alice[1, 2, 12] = 1 0 1  Bob[3, 13] = 0 1   Outputs[5, 18, 15] = 1 1 0 
+  Alice[1, 2, 12] = 1 0 1  Bob[3, 13] = 1 0   Outputs[5, 18, 15] = 0 1 0 
+  Alice[1, 2, 12] = 1 0 1  Bob[3, 13] = 1 1   Outputs[5, 18, 15] = 0 1 1 
+  Alice[1, 2, 12] = 1 1 0  Bob[3, 13] = 0 0   Outputs[5, 18, 15] = 0 0 1 
+  Alice[1, 2, 12] = 1 1 0  Bob[3, 13] = 0 1   Outputs[5, 18, 15] = 0 1 0 
+  Alice[1, 2, 12] = 1 1 0  Bob[3, 13] = 1 0   Outputs[5, 18, 15] = 1 0 1 
+  Alice[1, 2, 12] = 1 1 0  Bob[3, 13] = 1 1   Outputs[5, 18, 15] = 1 1 0 
+  Alice[1, 2, 12] = 1 1 1  Bob[3, 13] = 0 0   Outputs[5, 18, 15] = 0 1 0 
+  Alice[1, 2, 12] = 1 1 1  Bob[3, 13] = 0 1   Outputs[5, 18, 15] = 0 1 1 
+  Alice[1, 2, 12] = 1 1 1  Bob[3, 13] = 1 0   Outputs[5, 18, 15] = 1 1 0 
+  Alice[1, 2, 12] = 1 1 1  Bob[3, 13] = 1 1   Outputs[5, 18, 15] = 1 1 1 
+
+python3 main.py alice	 json/f.cmp.json
+
+======= 2-bit CMP using 9 Gates - Dulay =======
+  Alice[1, 2] = 0 0  Bob[3, 4] = 0 0   Outputs[17, 19] = 0 0 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 0 1   Outputs[17, 19] = 1 1 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 1 0   Outputs[17, 19] = 1 1 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 1 1   Outputs[17, 19] = 1 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 0 0   Outputs[17, 19] = 0 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 0 1   Outputs[17, 19] = 0 0 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 1 0   Outputs[17, 19] = 1 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 1 1   Outputs[17, 19] = 1 1 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 0 0   Outputs[17, 19] = 0 1 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 0 1   Outputs[17, 19] = 0 1 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 1 0   Outputs[17, 19] = 0 0 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 1 1   Outputs[17, 19] = 1 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 0 0   Outputs[17, 19] = 0 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 0 1   Outputs[17, 19] = 0 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 1 0   Outputs[17, 19] = 0 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 1 1   Outputs[17, 19] = 0 0 
+
+python3 main.py alice	 json/f.max.json
+
+======= 2-bit MAX in 10 gates - Dulay =======
+  Alice[1, 2] = 0 0  Bob[3, 4] = 0 0   Outputs[10, 19] = 0 0 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 0 1   Outputs[10, 19] = 0 1 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 1 0   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 1 1   Outputs[10, 19] = 1 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 0 0   Outputs[10, 19] = 0 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 0 1   Outputs[10, 19] = 0 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 1 0   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 1 1   Outputs[10, 19] = 1 1 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 0 0   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 0 1   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 1 0   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 1 1   Outputs[10, 19] = 1 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 0 0   Outputs[10, 19] = 1 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 0 1   Outputs[10, 19] = 1 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 1 0   Outputs[10, 19] = 1 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 1 1   Outputs[10, 19] = 1 1 
+
+python3 main.py alice	 json/f.min.json
+
+======= 2-bit MIN in 10 gates - Dulay =======
+  Alice[1, 2] = 0 0  Bob[3, 4] = 0 0   Outputs[10, 19] = 0 0 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 0 1   Outputs[10, 19] = 0 0 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 1 0   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 1 1   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 0 0   Outputs[10, 19] = 0 0 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 0 1   Outputs[10, 19] = 0 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 1 0   Outputs[10, 19] = 1 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 1 1   Outputs[10, 19] = 1 1 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 0 0   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 0 1   Outputs[10, 19] = 1 1 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 1 0   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 1 1   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 0 0   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 0 1   Outputs[10, 19] = 1 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 1 0   Outputs[10, 19] = 1 0 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 1 1   Outputs[10, 19] = 1 1 
+
+python3 main.py alice	 json/f.smart.json
+
+======= circuit from Smart, figure 2.2, page 443 =======
+  Alice[1, 2] = 0 0  Bob[3, 4] = 0 0   Outputs[7] = 0 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 0 1   Outputs[7] = 1 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 1 0   Outputs[7] = 0 
+  Alice[1, 2] = 0 0  Bob[3, 4] = 1 1   Outputs[7] = 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 0 0   Outputs[7] = 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 0 1   Outputs[7] = 0 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 1 0   Outputs[7] = 1 
+  Alice[1, 2] = 0 1  Bob[3, 4] = 1 1   Outputs[7] = 0 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 0 0   Outputs[7] = 0 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 0 1   Outputs[7] = 1 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 1 0   Outputs[7] = 1 
+  Alice[1, 2] = 1 0  Bob[3, 4] = 1 1   Outputs[7] = 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 0 0   Outputs[7] = 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 0 1   Outputs[7] = 0 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 1 0   Outputs[7] = 1 
+  Alice[1, 2] = 1 1  Bob[3, 4] = 1 1   Outputs[7] = 1 
+
