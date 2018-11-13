@@ -6,8 +6,8 @@ import json	# load
 import sys	# argv
 
 import util	# ClientSocket, log, ServerSocket
-# import ot	# alice, bob
-# import yao	# Circuit
+import ot	# alice, bob
+import yao	# Circuit
 
 # Alice is the circuit generator (client) __________________________________
 
@@ -19,7 +19,7 @@ def alice(filename):
 
     for json_circuit in json_circuits['circuits']:
         pass
-        # << removed >>
+        # TODO
 
 # Bob is the circuit evaluator (server) ____________________________________
 
@@ -28,7 +28,7 @@ def bob():
     util.log(f'Bob: Listening ...')
     while True:
         pass
-        # << removed >>
+        # TODO
 
 # local test of circuit generation and evaluation, no transfers_____________
 
@@ -38,7 +38,7 @@ def local_test(filename):
 
     for json_circuit in json_circuits['circuits']:
         pass
-        # << removed >>
+        #TODO
 
 # main _____________________________________________________________________
 
