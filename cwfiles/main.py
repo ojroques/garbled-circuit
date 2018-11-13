@@ -9,6 +9,8 @@ import util	# ClientSocket, log, ServerSocket
 import ot	# alice, bob
 import yao	# Circuit
 
+import garble as gb
+
 # Alice is the circuit generator (client) __________________________________
 
 def alice(filename):
