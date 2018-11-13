@@ -2,3 +2,4 @@
 
 ## Secure Multi-Party Computation
 * Olivier Roques
+* Emmanuelle Risson
