@@ -1,3 +1,4 @@
+import random
 import pickle
 from cryptography.fernet import Fernet
 
@@ -12,14 +13,14 @@ def decrypt(key, data):
 class GarbledTable:
     """A representation of a garbled table."""
 
-    def __init__(self, gate, pbits):
-        self.garbled_table       = {}
-        self.clear_garbled_table = {}
-        self.keys                = {} # TODO
+    def __init__(self, gate, keys, pbits):
+        self.keys                = keys
         self.pbits               = pbits
         self.input               = gate["in"]
         self.output              = gate["id"]
         self.gate_type           = gate["type"]
+        self.garbled_table       = {}
+        self.clear_garbled_table = {}
 
         switch = {
             "OR"   : lambda b1, b2: int(b1 or b2),
@@ -30,17 +31,11 @@ class GarbledTable:
             "XNOR" : lambda b1, b2: int(not(bool(b1) ^ bool(b2)))
         }
 
-        self._gen_keys()
         if (self.gate_type == "NOT"):
             self._gen_not_garbled_table()
         else:
             operator = switch.get(self.gate_type, "Invalid gate")
             self._gen_garbled_table(operator)
-
-    def _gen_keys(self):
-        for wire in self.input + [self.output]:
-            self.keys[(wire, 0)] = Fernet.generate_key()
-            self.keys[(wire, 1)] = Fernet.generate_key()
 
     def _gen_not_garbled_table(self):
         inp, out = self.input[0], self.output
@@ -51,6 +46,7 @@ class GarbledTable:
             encry_bit_out = bit_out ^ self.pbits[out]
             key_in        = self.keys[(inp, bit_in)]
             key_out       = self.keys[(out, bit_out)]
+
             self.clear_garbled_table[(encr_bit_in, )] = \
                 [(inp, bit_in), (out, bit_out), encry_bit_out]
             msg = pickle.dumps((key_out, encry_bit_out))
@@ -68,6 +64,7 @@ class GarbledTable:
                 key_a         = self.keys[(in_a, bit_a)]
                 key_b         = self.keys[(in_b, bit_b)]
                 key_out       = self.keys[(out, bit_out)]
+
                 self.clear_garbled_table[(encr_bit_a, encr_bit_b)] = \
                     [(in_a, bit_a), (in_b, bit_b), (out, bit_out), encry_bit_out]
                 msg = pickle.dumps((key_out, encry_bit_out))
@@ -75,7 +72,7 @@ class GarbledTable:
                     encrypt(key_a, encrypt(key_b, msg))
 
     def print_garbled_table(self):
-        print("TYPE: {0}".format(self.gate_type))
+        print("ID: {0}, TYPE: {1}".format(self.output, self.gate_type))
         for k, v in self.clear_garbled_table.items():
             if len(k) > 1:
                 key_a         = v[0]
@@ -96,24 +93,60 @@ class GarbledTable:
     def get_garbled_table(self):
         return self.garbled_table
 
-    def get_keys(self):
-        return self.keys
-
 
 class GarbledCircuit:
     """A representation of a garbled circuit."""
 
-    def __init__(self, circuit, pbits = []):
+    def __init__(self, circuit, pbits = {}):
+        self.gates = circuit["gates"]
         self.garbled_tables = {}
         self.keys           = {}
-        if len(pbits):
+
+        self.wire_ids = set()
+        for gate in self.gates:
+            self.wire_ids.add(gate["id"])
+            self.wire_ids.update(set(gate["in"]))
+        self.wire_ids = list(self.wire_ids)
+
+        self.pbits = {}
+        if pbits:
             self.pbits = pbits
         else:
-            pass
-            # random p-bits
+            self._gen_pbits()
+
+        self._gen_keys()
+        self._gen_garbled_tables()
+
+    def _gen_pbits(self):
+        for wire_id in self.wire_ids:
+            self.pbits[wire_id] = random.randint(0, 1)
 
     def _gen_keys(self):
+        for wire_id in self.wire_ids:
+            self.keys[(wire_id, 0)] = Fernet.generate_key()
+            self.keys[(wire_id, 1)] = Fernet.generate_key()
+
+    def _gen_garbled_tables(self):
+        for gate in self.gates:
+            gate_id = gate["id"]
+            garbled_table = GarbledTable(gate, self.keys, self.pbits)
+            self.garbled_tables[gate_id] = garbled_table.get_garbled_table()
+
+    def evaluate(self, a_inputs, b_inputs):
         pass
+
+    def print_evaluation(self, alice, bob):
+        pass
+
+    def print_garbled_tables(self):
+        print("PBITS:".format(self.pbits))
+        for wire_id, pbit in self.pbits.items():
+            print("* {0}: {1}".format(wire_id, pbit))
+        print()
+        for gate in self.gates:
+            garbled_table = GarbledTable(gate, self.keys, self.pbits)
+            garbled_table.print_garbled_table()
+            print()
 
     def get_pbits(self):
         return self.pbits
