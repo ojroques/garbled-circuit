@@ -20,8 +20,13 @@ def alice(filename):
         json_circuits = json.load(json_file)
 
     for json_circuit in json_circuits['circuits']:
-        pass
-        # TODO
+        pbits = {1: 1, 3:0, 5:0}
+        gate = gb.GarbledTable(json_circuit["gates"][0], pbits)
+        gate.print_garbled_table()
+        pbits = {5:0, 6:0}
+        gate = gb.GarbledTable(json_circuit["gates"][1], pbits)
+        gate.print_garbled_table()
+
 
 # Bob is the circuit evaluator (server) ____________________________________
 
