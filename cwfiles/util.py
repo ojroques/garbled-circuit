@@ -129,5 +129,3 @@ class ClientSocket(Socket):  # change local host for
     self.socket.connect(endpoint)
 
 # __________________________________________________________________________
-
-

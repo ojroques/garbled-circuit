@@ -1,3 +1,8 @@
+"""
+Emmanuelle Risson : ear
+Olivier Roques    : or518
+"""
+
 import random
 import pickle
 from cryptography.fernet import Fernet
@@ -39,8 +44,8 @@ def evaluate(circuit, garbled_table, pbits_out, a_inputs, b_inputs={}):
     return evaluation
 
 
-class GarbledTable:
-    """A representation of a garbled table."""
+class GarbledGate:
+    """A representation of a garbled gate."""
 
     def __init__(self, gate, keys, pbits):
         self.keys                = keys
@@ -133,44 +138,8 @@ class GarbledCircuit:
 
     def _gen_garbled_tables(self):
         for gate in self.gates:
-            garbled_gate = GarbledTable(gate, self.keys, self.pbits)
+            garbled_gate = GarbledGate(gate, self.keys, self.pbits)
             self.garbled_tables[gate["id"]] = garbled_gate.get_garbled_table()
-
-    def print_evaluation(self):
-        outputs   = self.circuit["out"]
-        a_wires   = self.circuit["alice"]
-        b_wires   = self.circuit.get("bob", [])
-        a_inputs  = {}
-        b_inputs  = {}
-        pbits_out = {w:self.pbits[w] for w in outputs}
-
-        print("\n======= {0} =======".format(self.circuit["name"]))
-
-        len_a_wires, len_b_wires = len(a_wires), len(b_wires)
-        N = len_a_wires + len_b_wires
-
-        for bits in [format(n, 'b').zfill(N) for n in range(2**N)]:
-            bits_a = [int(b) for b in bits[:len_a_wires]]
-            bits_b = [int(b) for b in bits[len_a_wires:]]
-
-            for i in range(len_a_wires):
-                a_inputs[a_wires[i]] = \
-                    (self.keys[(a_wires[i], bits_a[i])], \
-                     self.pbits[a_wires[i]] ^ bits_a[i])
-            for i in range(len_b_wires):
-                b_inputs[b_wires[i]] = \
-                    (self.keys[(b_wires[i], bits_b[i])], \
-                     self.pbits[b_wires[i]] ^ bits_b[i])
-
-            evaluation = evaluate(self.circuit, self.garbled_tables, \
-                              pbits_out, a_inputs, b_inputs)
-
-            str_bits_a     = ' '.join(bits[:len_a_wires])
-            str_bits_b     = ' '.join(bits[len_a_wires:]) + ' '*bool(len_b_wires)
-            str_evaluation = ' '.join([str(v) for v in evaluation.values()])
-            line = "  Alice{0} = {1}  Bob{2} = {3}  Outputs{4} = {5} ".\
-                format(a_wires, str_bits_a, b_wires, str_bits_b, outputs, str_evaluation)
-            print(line)
 
     def get_pbits(self):
         return self.pbits

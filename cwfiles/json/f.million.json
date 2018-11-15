@@ -1,0 +1,15 @@
+{ 
+    "circuits" : [
+        { 
+            "name"  : "millionaire problem",
+            "alice" : [],
+            "bob"   : [],
+            "out"   : [],
+            "gates" : [
+                {}
+            ]
+        }
+    ]
+}
+
+
