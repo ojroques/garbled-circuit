@@ -22,7 +22,7 @@ def alice(filename):
     for json_circuit in json_circuits['circuits']:
         garble_circuit = gb.GarbledCircuit(json_circuit)
         garble_circuit.print_evaluation()
-
+    print()
 
 # Bob is the circuit evaluator (server) ____________________________________
 

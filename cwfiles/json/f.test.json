@@ -9,6 +9,15 @@
             "gates" : [
                 { "id":5, "type":"AND",  "in": [1, 3] }
             ]
+        },
+        {
+            "name"  : "NOT",
+            "alice" : [1],
+            "bob"   : [],
+            "out"   : [2],
+            "gates" : [
+                { "id":2, "type":"NOT",  "in": [1] }
+            ]
         }
     ]
 } 

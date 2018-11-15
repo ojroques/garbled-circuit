@@ -10,7 +10,7 @@ def decrypt(key, data):
     f = Fernet(key)
     return f.decrypt(data)
 
-def evaluate(circuit, garbled_table, a_inputs, b_inputs, pbits_out):
+def evaluate(circuit, garbled_table, pbits_out, a_inputs, b_inputs={}):
     gates        = circuit["gates"]
     wire_outputs = circuit["out"]
     wire_inputs  = {}
@@ -34,7 +34,7 @@ def evaluate(circuit, garbled_table, a_inputs, b_inputs, pbits_out):
         wire_inputs[gate_id] = pickle.loads(msg)
 
     for out in wire_outputs:
-        evaluation[out] = (wire_inputs.get(out, "Evaluation failed.")[1]) ^ (pbits_out[out])
+        evaluation[out] = wire_inputs[out][1] ^ pbits_out[out]
 
     return evaluation
 
@@ -49,7 +49,6 @@ class GarbledTable:
         self.output              = gate["id"]
         self.gate_type           = gate["type"]
         self.garbled_table       = {}
-        self.clear_garbled_table = {}
 
         switch = {
             "OR"   : lambda b1, b2: b1 or b2,
@@ -63,8 +62,7 @@ class GarbledTable:
         if (self.gate_type == "NOT"):
             self._gen_not_garbled_table()
         else:
-            operator = switch.get(self.gate_type, \
-                                  "Invalid gate: {0}".format(self.gate_type))
+            operator = switch[self.gate_type]
             self._gen_garbled_table(operator)
 
     def _gen_not_garbled_table(self):
@@ -77,8 +75,6 @@ class GarbledTable:
             key_in        = self.keys[(inp, bit_in)]
             key_out       = self.keys[(out, bit_out)]
 
-            self.clear_garbled_table[(encr_bit_in, )] = \
-                [(inp, bit_in), (out, bit_out), encr_bit_out]
             msg = pickle.dumps((key_out, encr_bit_out))
             self.garbled_table[(encr_bit_in, )] = encrypt(key_in, msg)
 
@@ -95,30 +91,9 @@ class GarbledTable:
                 key_b         = self.keys[(in_b, bit_b)]
                 key_out       = self.keys[(out, bit_out)]
 
-                self.clear_garbled_table[(encr_bit_a, encr_bit_b)] = \
-                    [(in_a, bit_a), (in_b, bit_b), (out, bit_out), encr_bit_out]
                 msg = pickle.dumps((key_out, encr_bit_out))
                 self.garbled_table[(encr_bit_a, encr_bit_b)] = \
                     encrypt(key_a, encrypt(key_b, msg))
-
-    def print_garbled_table(self):
-        print("ID: {0}, TYPE: {1}".format(self.output, self.gate_type))
-        for k, v in self.clear_garbled_table.items():
-            if len(k) > 1:
-                key_a         = v[0]
-                key_b         = v[1]
-                key_out       = v[2]
-                encr_bit_out = v[3]
-                print("[{0}, {1}]: [{2}, {3}][{4}, {5}]([{6}, {7}], {8})".\
-                      format(k[0], k[1], key_a[0], key_a[1], key_b[0], \
-                             key_b[1], key_out[0], key_out[1], encr_bit_out))
-            else:
-                key_in        = v[0]
-                key_out       = v[1]
-                encr_bit_out = v[2]
-                print("[{0}]: [{1}, {2}]([{3}, {4}], {5})".\
-                      format(k[0], key_in[0], key_in[1], \
-                             key_out[0], key_out[1], encr_bit_out))
 
     def get_garbled_table(self):
         return self.garbled_table
@@ -164,12 +139,12 @@ class GarbledCircuit:
     def print_evaluation(self):
         outputs   = self.circuit["out"]
         a_wires   = self.circuit["alice"]
-        b_wires   = self.circuit["bob"]
+        b_wires   = self.circuit.get("bob", [])
         a_inputs  = {}
         b_inputs  = {}
         pbits_out = {w:self.pbits[w] for w in outputs}
 
-        print(self.circuit["name"])
+        print("\n======= {0} =======".format(self.circuit["name"]))
 
         len_a_wires, len_b_wires = len(a_wires), len(b_wires)
         N = len_a_wires + len_b_wires
@@ -188,25 +163,14 @@ class GarbledCircuit:
                      self.pbits[b_wires[i]] ^ bits_b[i])
 
             evaluation = evaluate(self.circuit, self.garbled_tables, \
-                              a_inputs, b_inputs, pbits_out)
+                              pbits_out, a_inputs, b_inputs)
 
             str_bits_a     = ' '.join(bits[:len_a_wires])
-            str_bits_b     = ' '.join(bits[len_a_wires:])
+            str_bits_b     = ' '.join(bits[len_a_wires:]) + ' '*bool(len_b_wires)
             str_evaluation = ' '.join([str(v) for v in evaluation.values()])
-            line = "  Alice{0} = {1}  Bob{2} = {3}  Outputs{4} = {5}".\
+            line = "  Alice{0} = {1}  Bob{2} = {3}  Outputs{4} = {5} ".\
                 format(a_wires, str_bits_a, b_wires, str_bits_b, outputs, str_evaluation)
             print(line)
-
-    def print_garbled_tables(self):
-        print("NAME: {0}".format(self.circuit["name"]))
-        print("PBITS:".format(self.pbits))
-        for wire, pbit in self.pbits.items():
-            print("* {0}: {1}".format(wire, pbit))
-        print()
-        for gate in self.gates:
-            garbled_table = GarbledTable(gate, self.keys, self.pbits)
-            garbled_table.print_garbled_table()
-            print()
 
     def get_pbits(self):
         return self.pbits
