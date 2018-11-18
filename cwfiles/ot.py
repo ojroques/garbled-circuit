@@ -11,68 +11,89 @@ import yao
 
 OBLIVIOUS_TRANSFERS = True
 
-if OBLIVIOUS_TRANSFERS: # __________________________________________________
-    def send_yao_circuit(socket, circuit, g_tables, pbits_out):
-        socket.send(circuit)
-        socket.send(g_tables)
-        socket.send(pbits_out)
+def send_yao_circuit(socket, circuit, g_tables, pbits_out):
+    socket.send_wait(circuit)
+    socket.send_wait(g_tables)
+    socket.send_wait(pbits_out)
 
-    def get_bob_result(socket, a_inputs, b_keys):
-        """
-        a_inputs of the form:
-            {wire: (key, encrypted_bit), ...}
-        b_keys of the form:
-            {(wire, 0): (key, 0^pbits[wire],
-             (wire, 1): key, 1^pbits[wire]...}
-        """
+def receive_yao_circuit(socket):
+    circuit   = socket.receive()
+    socket.send(True)
+    g_tables  = socket.receive()
+    socket.send(True)
+    pbits_out = socket.receive()
+    socket.send(True)
+    return (circuit, g_tables, pbits_out)
+
+if OBLIVIOUS_TRANSFERS: # __________________________________________________
+
+    def get_result(socket, a_inputs, b_keys):
         socket.send(a_inputs)
 
-        for i in range(len(b_keys) // 2):
+        nb_bob_inputs = len([w for (w, b) in b_keys if b])
+        for i in range(nb_bob_inputs):
             w = socket.receive()
+            util.log('OT Request received')
             pair = (b_keys[w, 0], b_keys[w, 1])
             ot_alice(socket, pair)
 
         result = socket.receive()
         return result
 
+    # bellare-micali OT with naor and pinkas optimisations, see smart p423
     def ot_alice(socket, pair):
         """
             pair = (msg1, msg2)
         """
         pass
 
-    def receive_yao_circuit(socket):
-        circuit   = socket.receive()
-        g_tables  = socket.receive()
-        pbits_out = socket.receive()
-        return (circuit, g_tables, pbits_out)
-
     def send_result(socket, circuit, g_tables, pbits_out, b_inputs):
-        """
-        b_inputs of the form:
-            {wire: clear_bit, ...}
-        """
         a_inputs      = socket.receive()
         b_inputs_encr = {}
 
         for w, b_input in b_inputs.items():
             socket.send(w)
+            util.log('OT Request sent')
             ot_bot(socket, b_input)
             b_inputs_encr[w] = socket.receive()
 
-        result = yao.evaluate(circuit, g_tables, pbits_out, a_inputs, b_inputs_encr)
+        result = yao.evaluate(circuit, g_tables, pbits_out, \
+                              a_inputs, b_inputs_encr)
         socket.send(result)
 
+    # bellare-micali OT with naor and pinkas optimisations, see smart p423
     def ot_bob(socket, b_input):
         """
             b_input = 0 or 1
         """
         pass
 
-  # bellare-micali OT with naor and pinkas optimisations, see smart p423
 
 else: # ____________________________________________________________________
 
-  # non oblivious transfers, not even a secure channel is used, for testing
+    def get_result(socket, a_inputs, b_keys):
+        socket.send(a_inputs)
+
+        nb_bob_inputs = len([w for (w, b) in b_keys if b])
+        for i in range(nb_bob_inputs):
+            w = socket.receive()
+            pair = (b_keys[w, 0], b_keys[w, 1])
+            socket.send(pair)
+
+        result = socket.receive()
+        return result
+
+    def send_result(socket, circuit, g_tables, pbits_out, b_inputs):
+        a_inputs      = socket.receive()
+        b_inputs_encr = {}
+
+        for w, b_input in b_inputs.items():
+            socket.send(w)
+            pair = socket.receive()
+            b_inputs_encr[w] = pair[b_input]
+
+        result = yao.evaluate(circuit, g_tables, pbits_out, \
+                              a_inputs, b_inputs_encr)
+        socket.send(result)
 
 # __________________________________________________________________________
