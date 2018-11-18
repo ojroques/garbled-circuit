@@ -54,7 +54,7 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         for w, b_input in b_inputs.items():
             socket.send(w)
             util.log('OT Request sent')
-            ot_bot(socket, b_input)
+            ot_bob(socket, b_input)
             b_inputs_encr[w] = socket.receive()
 
         result = yao.evaluate(circuit, g_tables, pbits_out, \
@@ -75,7 +75,7 @@ else: # ____________________________________________________________________
         socket.send(a_inputs)
 
         nb_bob_inputs = len([w for (w, b) in b_keys if b])
-        for i in range(nb_bob_inputs):
+        for _ in range(nb_bob_inputs):
             w = socket.receive()
             pair = (b_keys[w, 0], b_keys[w, 1])
             socket.send(pair)
