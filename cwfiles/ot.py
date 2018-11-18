@@ -31,7 +31,7 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         socket.send(a_inputs)
 
         nb_bob_inputs = len([w for (w, b) in b_keys if b])
-        for i in range(nb_bob_inputs):
+        for _ in range(nb_bob_inputs):
             w = socket.receive()
             util.log('OT Request received')
             pair = (b_keys[w, 0], b_keys[w, 1])
