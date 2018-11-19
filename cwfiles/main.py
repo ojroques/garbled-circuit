@@ -108,6 +108,7 @@ def local_test(filename):
         keys      = g_circuit.get_keys()
         pbits     = g_circuit.get_pbits()
         print_evaluation_local(json_circuit, g_tables, keys, pbits)
+    print()
 
 def print_evaluation_local(circuit, g_tables, keys, pbits):
     outputs   = circuit["out"]
