@@ -50,7 +50,6 @@ def print_evaluation(socket, circuit, keys, pbits):
 
     for bits in [format(n, 'b').zfill(N) for n in range(2**N)]:
         bits_a = [int(b) for b in bits[:len_a_wires]]
-        bits_b = [int(b) for b in bits[len_a_wires:]]
 
         for i in range(len_a_wires):
             a_inputs[a_wires[i]] = \
@@ -89,9 +88,7 @@ def send_evaluation(socket, circuit, g_tables, pbits_out):
     N = len_a_wires + len_b_wires
 
     for bits in [format(n, 'b').zfill(N) for n in range(2**N)]:
-        bits_a = [int(b) for b in bits[:len_a_wires]]
-        bits_b = [int(b) for b in bits[len_a_wires:]]
-
+        bits_b = [int(b) for b in bits[N - len_b_wires:]]
         b_inputs_clear = {b_wires[i]: bits_b[i] for i in range(len_b_wires)}
         ot.send_result(socket, circuit, g_tables, pbits_out, b_inputs_clear)
 
@@ -128,7 +125,7 @@ def print_evaluation_local(circuit, g_tables, keys, pbits):
 
     for bits in [format(n, 'b').zfill(N) for n in range(2**N)]:
         bits_a = [int(b) for b in bits[:len_a_wires]]
-        bits_b = [int(b) for b in bits[len_a_wires:]]
+        bits_b = [int(b) for b in bits[N - len_b_wires:]]
 
         for i in range(len_a_wires):
             a_inputs[a_wires[i]] = \
