@@ -99,6 +99,8 @@ def send_evaluation(socket, circuit, g_tables, pbits_out):
 # local test of circuit generation and evaluation, no transfers_____________
 
 def local_test(filename):
+    PRINT_MODE = 0
+
     with open(filename) as json_file:
         json_circuits = json.load(json_file)
 
@@ -107,7 +109,8 @@ def local_test(filename):
         g_tables  = g_circuit.get_garbled_tables()
         keys      = g_circuit.get_keys()
         pbits     = g_circuit.get_pbits()
-        print_evaluation_local(json_circuit, g_tables, keys, pbits)
+        if PRINT_MODE: g_circuit.print_garbled_tables()
+        else: print_evaluation_local(json_circuit, g_tables, keys, pbits)
     print()
 
 def print_evaluation_local(circuit, g_tables, keys, pbits):
