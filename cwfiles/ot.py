@@ -41,9 +41,9 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         return result
 
     # bellare-micali OT with naor and pinkas optimisations, see smart p423
-    def ot_alice(socket, pair):
+    def ot_alice(socket, msgs):
         """
-            pair = (msg1, msg2)
+            msgs = (msg1, msg2)
         """
         pass
 
@@ -62,9 +62,9 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         socket.send(result)
 
     # bellare-micali OT with naor and pinkas optimisations, see smart p423
-    def ot_bob(socket, b_input):
+    def ot_bob(socket, b):
         """
-            b_input = 0 or 1
+            b = 0 or 1
         """
         pass
 

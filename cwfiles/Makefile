@@ -5,7 +5,7 @@
 ALICE   = python3 main.py alice	# circuit generator (client)
 BOB     = python3 main.py bob	# circuit evaluator (server)
 LOCAL   = python3 main.py local	# local, not client-server, no transfers
-ONEFILE	= ${ALICE}		# test 1 file, choose ALICE or LOCAL
+ONEFILE	= ${LOCAL}		        # test 1 file, choose ALICE or LOCAL
 
 default:
 	@echo '  >> make {alice, bob, local}'
