@@ -16,6 +16,7 @@ import yao          # Circuit
 # Alice is the circuit generator (client) __________________________________
 
 def alice(filename):
+    """ALICE: create Yao circuit, send it and print circuit evaluation."""
     socket = util.ClientSocket()
     util.log('CLIENT STARTED')
 
@@ -23,23 +24,38 @@ def alice(filename):
         json_circuits = json.load(json_file)
 
     for json_circuit in json_circuits['circuits']:
+        # 1: CREATE YAO CIRCUIT
         g_circuit = yao.GarbledCircuit(json_circuit)
         g_tables  = g_circuit.get_garbled_tables()
         keys      = g_circuit.get_keys()
         pbits     = g_circuit.get_pbits()
         pbits_out = {w: pbits[w] for w in json_circuit["out"]}
+
+        # 2: SEND YAO CIRCUIT TO BOB
         util.log('Sending yao circuit...')
         ot.send_yao_circuit(socket, json_circuit, g_tables, pbits_out)
+
+        # 3: PRINT YAO CIRCUIT EVALUATION FOR ALL INPUTS
         util.log('Waiting for circuit evaluation...')
         print_evaluation(socket, json_circuit, keys, pbits)
         util.log('Done.\n')
     print()
 
+
 def print_evaluation(socket, circuit, keys, pbits):
-    outputs   = circuit["out"]
-    a_wires   = circuit.get("alice", [])
+    """Print circuit evaluation for all Bob and Alice inputs.
+
+    Keyword arguments:
+    circuit -- dict containing circuit spec
+    keys    -- dict mapping each (wire, bit) pair with a key
+    pbits   -- dict mapping each wire with a p-bit
+    """
+    outputs   = circuit["out"]           # ID of outputs
+    a_wires   = circuit.get("alice", []) # List of Alice's wires
+    # dict mapping Alice's wires to (key, encr_bit) inputs
     a_inputs  = {}
-    b_wires   = circuit.get("bob", [])
+    b_wires   = circuit.get("bob", [])   # List of Bob's wires
+    # dict mapping each (bob's wire, bit) pair to a pair (key, encr_bit)
     b_keys    = {(w, bit): (key, bit ^ pbits[w])\
                  for (w, bit), key in keys.items() if w in b_wires}
 
@@ -48,13 +64,16 @@ def print_evaluation(socket, circuit, keys, pbits):
     len_a_wires, len_b_wires = len(a_wires), len(b_wires)
     N = len_a_wires + len_b_wires
 
+    # Generate all possible inputs for both Alice and Bob
     for bits in [format(n, 'b').zfill(N) for n in range(2**N)]:
-        bits_a = [int(b) for b in bits[:len_a_wires]]
+        bits_a = [int(b) for b in bits[:len_a_wires]] # Alice's inputs
 
+        # For each Alice's wire, map clear input to (key, encr_bit)
         for i in range(len_a_wires):
             a_inputs[a_wires[i]] = \
                 (keys[(a_wires[i], bits_a[i])], pbits[a_wires[i]] ^ bits_a[i])
 
+        # Send Alice's encrypted inputs and keys to Bob and wait for results
         result = ot.get_result(socket, a_inputs, b_keys)
 
         str_bits_a = ' '.join(bits[:len_a_wires]) + ' '*bool(len_a_wires)
@@ -78,6 +97,7 @@ def bob():
         util.log('Sending circuit evaluation...')
         send_evaluation(socket, circuit, g_tables, pbits_out)
         util.log('Done.\n')
+
 
 def send_evaluation(socket, circuit, g_tables, pbits_out):
     outputs   = circuit["out"]
@@ -109,6 +129,7 @@ def local_test(filename):
         if PRINT_MODE: g_circuit.print_garbled_tables()
         else: print_evaluation_local(json_circuit, g_tables, keys, pbits)
     print()
+
 
 def print_evaluation_local(circuit, g_tables, keys, pbits):
     outputs   = circuit["out"]
