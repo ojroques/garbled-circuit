@@ -60,9 +60,9 @@ def print_evaluation(socket, circuit, keys, pbits):
     # dict mapping Alice's wires to (key, encr_bit) inputs
     a_inputs  = {}
     b_wires   = circuit.get("bob", [])   # List of Bob's wires
-    # dict mapping each (bob's wire, bit) pair to a pair (key, encr_bit)
-    b_keys    = {(w, bit): (key, bit ^ pbits[w])\
-                 for (w, bit), key in keys.items() if w in b_wires}
+    # dict mapping each bob's wire to a pair (key, encr_bit)
+    b_keys    = {w: ((key0, 0 ^ pbits[w]), (key1, 1 ^ pbits[w]))
+                 for w, (key0, key1) in keys.items() if w in b_wires}
 
     print("\n======= {0} =======".format(circuit["name"]))
 
@@ -76,7 +76,7 @@ def print_evaluation(socket, circuit, keys, pbits):
         # Map Alice's wires to (key, encr_bit)
         for i in range(len_a_wires):
             a_inputs[a_wires[i]] = \
-                (keys[(a_wires[i], bits_a[i])], pbits[a_wires[i]] ^ bits_a[i])
+                (keys[a_wires[i]][bits_a[i]], pbits[a_wires[i]] ^ bits_a[i])
 
         # Send Alice's encrypted inputs and keys to Bob and wait for results
         result = ot.get_result(socket, a_inputs, b_keys)
@@ -195,11 +195,11 @@ def print_evaluation_local(circuit, g_tables, keys, pbits):
         # Map Alice's wires to (key, encr_bit)
         for i in range(len_a_wires):
             a_inputs[a_wires[i]] = \
-                (keys[(a_wires[i], bits_a[i])], pbits[a_wires[i]] ^ bits_a[i])
+                (keys[a_wires[i]][bits_a[i]], pbits[a_wires[i]] ^ bits_a[i])
         # Map Bob's wires to (key, encr_bit)
         for i in range(len_b_wires):
             b_inputs[b_wires[i]] = \
-                (keys[(b_wires[i], bits_b[i])], pbits[b_wires[i]] ^ bits_b[i])
+                (keys[b_wires[i]][bits_b[i]], pbits[b_wires[i]] ^ bits_b[i])
 
         # Send Alice's encrypted inputs and keys to Bob and wait for results
         result = yao.evaluate(circuit, g_tables, pbits_out, a_inputs, b_inputs)

@@ -9,7 +9,7 @@ import yao
 # yao garbled circuit evaluation v1. simple version based on smart
 # naranker dulay, dept of computing, imperial college, october 2018
 
-OBLIVIOUS_TRANSFERS = True
+OBLIVIOUS_TRANSFERS = False
 
 def send_yao_circuit(socket, circuit, g_tables, pbits_out):
     socket.send_wait(circuit)
@@ -30,11 +30,10 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
     def get_result(socket, a_inputs, b_keys):
         socket.send(a_inputs)
 
-        nb_bob_inputs = len([w for (w, b) in b_keys if b])
-        for _ in range(nb_bob_inputs):
+        for _ in range(len(b_keys)):
             w = socket.receive()
             util.log('OT Request received')
-            pair = (b_keys[w, 0], b_keys[w, 1])
+            pair = (b_keys[w][0], b_keys[w][1])
             ot_alice(socket, pair)
 
         result = socket.receive()
@@ -80,10 +79,9 @@ else: # ____________________________________________________________________
     def get_result(socket, a_inputs, b_keys):
         socket.send(a_inputs)
 
-        nb_bob_inputs = len([w for (w, b) in b_keys if b])
-        for _ in range(nb_bob_inputs):
+        for _ in range(len(b_keys)):
             w = socket.receive()
-            pair = (b_keys[w, 0], b_keys[w, 1])
+            pair = (b_keys[w][0], b_keys[w][1])
             socket.send(pair)
 
         result = socket.receive()

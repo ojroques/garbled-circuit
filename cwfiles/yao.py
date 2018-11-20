@@ -89,7 +89,7 @@ class GarbledGate:
 
     Keyword arguemts:
     gate  -- dict containing gate spec
-    keys  -- dict containing all circuit keys
+    keys  -- dict mapping each wire to a pair of keys 
     pbits -- dict mapping each wire to its pbits
     """
 
@@ -124,8 +124,8 @@ class GarbledGate:
             bit_in        = encr_bit_in ^ self.pbits[inp]
             bit_out       = int(not(bit_in))
             encr_bit_out  = bit_out ^ self.pbits[out]
-            key_in        = self.keys[(inp, bit_in)]
-            key_out       = self.keys[(out, bit_out)]
+            key_in        = self.keys[inp][bit_in]
+            key_out       = self.keys[out][bit_out]
 
             self.clear_garbled_table[(encr_bit_in, )] = \
                 [(inp, bit_in), (out, bit_out), encr_bit_out]
@@ -141,9 +141,9 @@ class GarbledGate:
                 bit_b         = encr_bit_b ^ self.pbits[in_b]
                 bit_out       = int(operator(bit_a, bit_b))
                 encr_bit_out  = bit_out ^ self.pbits[out]
-                key_a         = self.keys[(in_a, bit_a)]
-                key_b         = self.keys[(in_b, bit_b)]
-                key_out       = self.keys[(out, bit_out)]
+                key_a         = self.keys[in_a][bit_a]
+                key_b         = self.keys[in_b][bit_b]
+                key_out       = self.keys[out][bit_out]
 
                 self.clear_garbled_table[(encr_bit_a, encr_bit_b)] = \
                     [(in_a, bit_a), (in_b, bit_b), (out, bit_out), encr_bit_out]
@@ -203,8 +203,7 @@ class GarbledCircuit:
 
     def _gen_keys(self):
         for wire in self.wires:
-            self.keys[(wire, 0)] = Fernet.generate_key()
-            self.keys[(wire, 1)] = Fernet.generate_key()
+            self.keys[wire] = (Fernet.generate_key(), Fernet.generate_key())
 
     def _gen_garbled_tables(self):
         for gate in self.gates:
