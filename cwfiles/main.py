@@ -52,7 +52,7 @@ def print_evaluation(socket, circuit, keys, pbits):
     Keyword arguments:
     socket  -- socket for exchanges between A and B
     circuit -- dict containing circuit spec
-    keys    -- dict mapping each (wire, bit) pair with a key
+    keys    -- dict mapping each wire to a pair of key
     pbits   -- dict mapping each wire with a p-bit
     """
     outputs   = circuit["out"]           # ID of outputs
@@ -169,7 +169,7 @@ def print_evaluation_local(circuit, g_tables, keys, pbits):
     Keyword arguments:
     circuit  -- dict containing circuit spec
     g_tables -- garbled tables of the yao circuit
-    keys     -- dict mapping each (wire, bit) pair with a key
+    keys    -- dict mapping each wire to a pair of key
     pbits    -- dict mapping each wire with a p-bit
     """
     outputs   = circuit["out"]           # ID of outputs
