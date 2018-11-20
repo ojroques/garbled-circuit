@@ -11,14 +11,45 @@ import pickle
 from cryptography.fernet import Fernet
 
 def encrypt(key, data):
+    """Encrypt a message.
+
+    Keywords arguments:
+    key  -- the encryption key
+    data -- the message to encrypt
+
+    Returns:
+    encrypt_msg -- a byte stream, the encrypted message
+    """
     f = Fernet(key)
     return f.encrypt(data)
 
 def decrypt(key, data):
+    """Decrypt a message.
+
+    Keywords arguments:
+    key  -- the decryption key
+    data -- the message to decrypt
+
+    Returns
+    decrypt_msg -- a byte stream, the decrypted message
+    """
     f = Fernet(key)
     return f.decrypt(data)
 
-def evaluate(circuit, garbled_table, pbits_out, a_inputs, b_inputs={}):
+def evaluate(circuit, g_tables, pbits_out, a_inputs, b_inputs):
+    """Evaluate yao circuit with given inputs.
+
+    Keyword arguments:
+    circuit   -- dict containing circuit spec
+    g_tables  -- garbled tables of yao circuit
+    pbits_out -- pbits of outputs
+    a_inputs  -- dict mapping Alice's wires to (key, encr_bit) inputs
+    b_inputs  -- dict mapping Bob's wires to (key, encr_bit) inputs
+
+    Returns:
+    evaluation -- a dict with mapping output wire with the result bit
+    """
+
     gates        = circuit["gates"]
     wire_outputs = circuit["out"]
     wire_inputs  = {}
@@ -31,12 +62,12 @@ def evaluate(circuit, garbled_table, pbits_out, a_inputs, b_inputs={}):
         gate_id, gate_in, msg = gate["id"], gate["in"], None
         if (len(gate_in) < 2) and (gate_in[0] in wire_inputs):
             key_in, encr_bit_in = wire_inputs[gate_in[0]]
-            encr_msg            = garbled_table[gate_id][(encr_bit_in, )]
+            encr_msg            = g_tables[gate_id][(encr_bit_in, )]
             msg                 = decrypt(key_in, encr_msg)
         elif (gate_in[0] in wire_inputs) and (gate_in[1] in wire_inputs):
             key_a, encr_bit_a = wire_inputs[gate_in[0]]
             key_b, encr_bit_b = wire_inputs[gate_in[1]]
-            encr_msg          = garbled_table[gate_id][(encr_bit_a, encr_bit_b)]
+            encr_msg          = g_tables[gate_id][(encr_bit_a, encr_bit_b)]
             msg               = decrypt(key_b, decrypt(key_a, encr_msg))
         if msg: wire_inputs[gate_id] = pickle.loads(msg)
 
@@ -68,12 +99,12 @@ class GarbledGate:
         }
 
         if (self.gate_type == "NOT"):
-            self._gen_not_garbled_table()
+            self._gen_garbled_table_not()
         else:
             operator = switch[self.gate_type]
             self._gen_garbled_table(operator)
 
-    def _gen_not_garbled_table(self):
+    def _gen_garbled_table_not(self):
         inp, out = self.input[0], self.output
 
         for encr_bit_in in (0, 1):

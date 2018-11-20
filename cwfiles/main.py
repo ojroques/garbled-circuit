@@ -95,6 +95,7 @@ def print_evaluation(socket, circuit, keys, pbits):
 # Bob is the circuit evaluator (server) ____________________________________
 
 def bob():
+    """BOB: Receive yao circuit and evaluate the circuit for all inputs."""
     socket = util.ServerSocket()
     util.log(f'SERVER STARTED')
 
@@ -136,7 +137,11 @@ def send_evaluation(socket, circuit, g_tables, pbits_out):
 # local test of circuit generation and evaluation, no transfers_____________
 
 def local_test(filename):
-    """FOR LOCAL TESTS: Print circuit evaluation or garbled tables."""
+    """FOR LOCAL TESTS: Print circuit evaluation or garbled tables.
+
+    Keyword argument:
+    filename -- name of the json representation of the circuit
+    """
     # 2 MODES:
     # 0 -> print yao circuit evaluation for all inputs
     # 1 -> print garbled tables of the yao circuit in a readable format

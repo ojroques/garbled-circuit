@@ -42,8 +42,11 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
 
     # bellare-micali OT with naor and pinkas optimisations, see smart p423
     def ot_alice(socket, msgs):
-        """
-            msgs = (msg1, msg2)
+        """Oblivious transfer, Alice's side.
+
+        Keyword argument:
+        socket -- socket for exchanges between A and B
+        msgs   -- a pair (msg1, msg2) to offer to Bob
         """
         pass
 
@@ -63,8 +66,11 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
 
     # bellare-micali OT with naor and pinkas optimisations, see smart p423
     def ot_bob(socket, b):
-        """
-            b = 0 or 1
+        """Oblivious transfer, Bob's side.
+
+        Keyword argument:
+        socket -- socket for exchanges between A and B
+        b      -- Bob's input bit used to select one of Alice's messages
         """
         pass
 
