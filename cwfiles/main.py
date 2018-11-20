@@ -11,7 +11,7 @@ import sys          # argv
 
 import util         # ClientSocket, log, ServerSocket
 import ot           # alice, bob
-import yao          # Circuit
+import yao          # Yao circuit
 
 # Alice is the circuit generator (client) __________________________________
 
@@ -73,7 +73,7 @@ def print_evaluation(socket, circuit, keys, pbits):
     for bits in [format(n, 'b').zfill(N) for n in range(2**N)]:
         bits_a = [int(b) for b in bits[:len_a_wires]]  # Alice's inputs
 
-        # For each Alice's wire, map clear input to (key, encr_bit)
+        # Map Alice's wires to (key, encr_bit)
         for i in range(len_a_wires):
             a_inputs[a_wires[i]] = \
                 (keys[(a_wires[i], bits_a[i])], pbits[a_wires[i]] ^ bits_a[i])
@@ -192,11 +192,11 @@ def print_evaluation_local(circuit, g_tables, keys, pbits):
         bits_a = [int(b) for b in bits[:len_a_wires]]      # Alice's inputs
         bits_b = [int(b) for b in bits[N - len_b_wires:]]  # Bob's inputs
 
-        # For each Alice's wire, map clear input to (key, encr_bit)
+        # Map Alice's wires to (key, encr_bit)
         for i in range(len_a_wires):
             a_inputs[a_wires[i]] = \
                 (keys[(a_wires[i], bits_a[i])], pbits[a_wires[i]] ^ bits_a[i])
-        # For each Bob's wire, map clear input to (key, encr_bit)
+        # Map Bob's wires to (key, encr_bit)
         for i in range(len_b_wires):
             b_inputs[b_wires[i]] = \
                 (keys[(b_wires[i], bits_b[i])], pbits[b_wires[i]] ^ bits_b[i])
@@ -217,7 +217,7 @@ def print_evaluation_local(circuit, g_tables, keys, pbits):
 # main _____________________________________________________________________
 
 def main():
-    """MAIN: Redirect execution according to system arguments"""
+    """MAIN: Redirect execution."""
     behaviour = sys.argv[1]
     if   behaviour == 'alice': alice(filename=sys.argv[2])
     elif behaviour == 'bob':   bob()
