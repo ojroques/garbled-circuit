@@ -1,6 +1,9 @@
 """
 Emmanuelle Risson : ear3218
 Olivier Roques    : or518
+
+yao garbled circuit evaluation v1. simple version based on smart
+naranker dulay, dept of computing, imperial college, october 2018
 """
 
 import util
