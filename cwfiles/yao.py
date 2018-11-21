@@ -13,7 +13,7 @@ from cryptography.fernet import Fernet
 def encrypt(key, data):
     """Encrypt a message.
 
-    Keywords arguments:
+    Keyword arguments:
     key  -- the encryption key
     data -- the message to encrypt
 
@@ -26,7 +26,7 @@ def encrypt(key, data):
 def decrypt(key, data):
     """Decrypt a message.
 
-    Keywords arguments:
+    Keyword arguments:
     key  -- the decryption key
     data -- the message to decrypt
 
@@ -42,7 +42,7 @@ def evaluate(circuit, g_tables, pbits_out, a_inputs, b_inputs):
     Keyword arguments:
     circuit   -- dict containing circuit spec
     g_tables  -- garbled tables of yao circuit
-    pbits_out -- pbits of outputs
+    pbits_out -- p-bits of outputs
     a_inputs  -- dict mapping Alice's wires to (key, encr_bit) inputs
     b_inputs  -- dict mapping Bob's wires to (key, encr_bit) inputs
 
@@ -76,7 +76,7 @@ def evaluate(circuit, g_tables, pbits_out, a_inputs, b_inputs):
             msg               = decrypt(key_b, decrypt(key_a, encr_msg))
         if msg: wire_inputs[gate_id] = pickle.loads(msg)
 
-    # After all gates have been evaluated, we can populate the dict of results
+    # After all gates have been evaluated, we populate the dict of results
     for out in wire_outputs:
         evaluation[out] = wire_inputs[out][1] ^ pbits_out[out]
 
@@ -89,13 +89,13 @@ class GarbledGate:
     Keyword arguments:
     gate  -- dict containing gate spec
     keys  -- dict mapping each wire to a pair of keys
-    pbits -- dict mapping each wire to its pbits
+    pbits -- dict mapping each wire to its p-bit
     """
 
     def __init__(self, gate, keys, pbits):
         self.keys                = keys          # dict of yao circuit keys
-        self.pbits               = pbits         # dict of pbits
-        self.input               = gate["in"]    # list of IDs of inputs
+        self.pbits               = pbits         # dict of p-bits
+        self.input               = gate["in"]    # list of inputs'ID
         self.output              = gate["id"]    # ID of output
         self.gate_type           = gate["type"]  # Gate type: OR, AND, ...
         self.garbled_table       = {}            # The garbled table of the gate
@@ -125,11 +125,11 @@ class GarbledGate:
 
         # For each entry in the garbled table
         for encr_bit_in in (0, 1):
-            # Retrive original bit
+            # Retrieve original bit
             bit_in        = encr_bit_in ^ self.pbits[inp]
             # Compute output bit according to the gate type
             bit_out       = int(not(bit_in))
-            # Compute encrypted bit wit the pbit table
+            # Compute encrypted bit with the p-bit table
             encr_bit_out  = bit_out ^ self.pbits[out]
             # Retrieve related keys
             key_in        = self.keys[inp][bit_in]
@@ -137,7 +137,7 @@ class GarbledGate:
 
             # Serialize the output key along with the encrypted bit
             msg = pickle.dumps((key_out, encr_bit_out))
-            # Encrypt message and add it in the garbled table
+            # Encrypt message and add it to the garbled table
             self.garbled_table[(encr_bit_in, )] = encrypt(key_in, msg)
             # Add to the clear table indexes of each keys
             self.clear_garbled_table[(encr_bit_in, )] = \
@@ -197,7 +197,7 @@ class GarbledCircuit:
 
     Keyword arguments:
     circuit -- dict containing circuit spec
-    pbits   -- optional, a dict of pbits for the given circuit
+    pbits   -- optional, a dict of p-bits for the given circuit
     """
 
     def __init__(self, circuit, pbits = {}):
@@ -205,7 +205,7 @@ class GarbledCircuit:
         self.gates          = circuit["gates"]  # list of gates
         self.wires          = set()             # list of circuit wires
 
-        self.pbits          = {}  # dict of pbits
+        self.pbits          = {}  # dict of p-bits
         self.keys           = {}  # dict of keys
         self.garbled_tables = {}  # dict of garbled tables
 
@@ -220,7 +220,7 @@ class GarbledCircuit:
         self._gen_garbled_tables()
 
     def _gen_pbits(self, pbits):
-        """Create a dict mapping each wire to a random pbit."""
+        """Create a dict mapping each wire to a random p-bit."""
         if pbits:
             self.pbits = pbits
         else:
@@ -232,16 +232,16 @@ class GarbledCircuit:
             self.keys[wire] = (Fernet.generate_key(), Fernet.generate_key())
 
     def _gen_garbled_tables(self):
-        """Create garbled table for each gate."""
+        """Create the garbled table of each gate."""
         for gate in self.gates:
             garbled_gate = GarbledGate(gate, self.keys, self.pbits)
             self.garbled_tables[gate["id"]] = garbled_gate.get_garbled_table()
 
     def print_garbled_tables(self):
-        """Print pbits and a clear representation of all garbled tables."""
+        """Print p-bits and a clear representation of all garbled tables."""
         print("NAME: {0}".format(self.circuit["name"]))
 
-        print("PBITS:".format(self.pbits))
+        print("P-BITS:".format(self.pbits))
         for wire, pbit in self.pbits.items():
             print("* {0}: {1}".format(wire, pbit))
         print()
@@ -252,7 +252,7 @@ class GarbledCircuit:
             print()
 
     def get_pbits(self):
-        """Return dict mapping each wire to its pbit."""
+        """Return dict mapping each wire to its p-bit."""
         return self.pbits
 
     def get_garbled_tables(self):

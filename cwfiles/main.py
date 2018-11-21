@@ -6,12 +6,12 @@ yao garbled circuit evaluation v1. simple version based on smart
 naranker dulay, dept of computing, imperial college, october 2018
 """
 
-import json         # load
-import sys          # argv
+import json # load
+import sys  # argv
 
-import util         # ClientSocket, log, ServerSocket
-import ot           # alice, bob
-import yao          # Yao circuit
+import util # ClientSocket, log, ServerSocket
+import ot   # alice, bob
+import yao  # Yao circuit
 
 # Alice is the circuit generator (client) __________________________________
 
@@ -24,6 +24,7 @@ def alice(filename):
     socket = util.ClientSocket()
     util.log('CLIENT STARTED')
 
+    # Load the circuit json representation
     with open(filename) as json_file:
         json_circuits = json.load(json_file)
 
@@ -53,13 +54,13 @@ def print_evaluation(socket, circuit, keys, pbits):
     socket  -- socket for exchanges between A and B
     circuit -- dict containing circuit spec
     keys    -- dict mapping each wire to a pair of key
-    pbits   -- dict mapping each wire with a p-bit
+    pbits   -- dict mapping each wire to a p-bit
     """
     outputs   = circuit["out"]           # ID of outputs
-    a_wires   = circuit.get("alice", []) # List of Alice's wires
+    a_wires   = circuit.get("alice", []) # list of Alice's wires
     # dict mapping Alice's wires to (key, encr_bit) inputs
     a_inputs  = {}
-    b_wires   = circuit.get("bob", [])   # List of Bob's wires
+    b_wires   = circuit.get("bob", [])   # list of Bob's wires
     # dict mapping each bob's wire to a pair (key, encr_bit)
     b_keys    = {w: ((key0, 0 ^ pbits[w]), (key1, 1 ^ pbits[w]))
                  for w, (key0, key1) in keys.items() if w in b_wires}
@@ -110,17 +111,17 @@ def bob():
 
 
 def send_evaluation(socket, circuit, g_tables, pbits_out):
-    """Evaluate yao circuit and send the result for all Bob and Alice's inputs.
+    """Evaluate yao circuit for all Bob and Alice's inputs and send the results.
 
     Keyword arguments:
     socket    -- socket for exchanges between A and B
     circuit   -- dict containing circuit spec
     g_tables  -- garbled tables of yao circuit
-    pbits_out -- pbits of outputs
+    pbits_out -- p-bits of outputs
     """
     outputs   = circuit["out"]           # ID of outputs
-    a_wires   = circuit.get("alice", []) # List of Alice's wires
-    b_wires   = circuit.get("bob", [])   # List of Bob's wires
+    a_wires   = circuit.get("alice", []) # list of Alice's wires
+    b_wires   = circuit.get("bob", [])   # list of Bob's wires
 
     len_a_wires, len_b_wires = len(a_wires), len(b_wires)
     N                        = len_a_wires + len_b_wires
@@ -128,7 +129,7 @@ def send_evaluation(socket, circuit, g_tables, pbits_out):
     # Generate all possible inputs for both Alice and Bob
     for bits in [format(n, 'b').zfill(N) for n in range(2**N)]:
         bits_b = [int(b) for b in bits[N - len_b_wires:]]  # Bob's inputs
-        # Create dict mapping each bob's wire to bob's input
+        # Create dict mapping each wire of Bob to Bob's input
         b_inputs_clear = {b_wires[i]: bits_b[i] for i in range(len_b_wires)}
         # Evaluate and send result to Alice
         ot.send_result(socket, circuit, g_tables, pbits_out, b_inputs_clear)
@@ -169,17 +170,17 @@ def print_evaluation_local(circuit, g_tables, keys, pbits):
     Keyword arguments:
     circuit  -- dict containing circuit spec
     g_tables -- garbled tables of the yao circuit
-    keys    -- dict mapping each wire to a pair of key
-    pbits    -- dict mapping each wire with a p-bit
+    keys     -- dict mapping each wire to a pair of key
+    pbits    -- dict mapping each wire to a p-bit
     """
     outputs   = circuit["out"]           # ID of outputs
-    a_wires   = circuit.get("alice", []) # List of Alice's wires
-    b_wires   = circuit.get("bob", [])   # List of Bob's wires
+    a_wires   = circuit.get("alice", []) # list of Alice's wires
+    b_wires   = circuit.get("bob", [])   # list of Bob's wires
     # dict mapping Alice's wires to (key, encr_bit) inputs
     a_inputs  = {}
     # dict mapping Bob's wires to (key, encr_bit) inputs
     b_inputs  = {}
-    # pbits of outputs
+    # p-bits of outputs
     pbits_out = {w: pbits[w] for w in outputs}
 
     print("\n======= {0} =======".format(circuit["name"]))
