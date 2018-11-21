@@ -12,20 +12,20 @@ import yao
 OBLIVIOUS_TRANSFERS = False
 
 def send_yao_circuit(socket, circuit, g_tables, pbits_out):
-    """Send Yao circuit from Alice to Bob.
+    """Send Yao circuit Bob.
 
     Keyword arguments:
-    socket  -- socket for exchanges between A and B
-    circuit
-    g_tables
-    pbits_out
+    socket    -- socket for exchanges between A and B
+    circuit   -- dict containing circuit spec
+    g_tables  -- garbled tables of yao circuit
+    pbits_out -- pbits of outputs
     """
     socket.send_wait(circuit)
     socket.send_wait(g_tables)
     socket.send_wait(pbits_out)
 
 def receive_yao_circuit(socket):
-    """Send Yao circuit from Alice to Bob.
+    """Receive Yao circuit from Alice.
 
     Keyword arguments:
     socket  -- socket for exchanges between A and B
