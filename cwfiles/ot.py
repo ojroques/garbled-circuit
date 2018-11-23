@@ -13,7 +13,7 @@ import pickle
 # yao garbled circuit evaluation v1. simple version based on smart
 # naranker dulay, dept of computing, imperial college, october 2018
 
-OBLIVIOUS_TRANSFERS = False
+OBLIVIOUS_TRANSFERS = True
 
 def send_yao_circuit(socket, circuit, g_tables, pbits_out):
     """Send Yao circuit Bob.
