@@ -8,6 +8,7 @@ naranker dulay, dept of computing, imperial college, october 2018
 
 import util
 import yao
+import pickle
 
 # yao garbled circuit evaluation v1. simple version based on smart
 # naranker dulay, dept of computing, imperial college, october 2018
@@ -65,7 +66,7 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
             w = socket.receive()
             # Perform oblivious transfer
             util.log('OT Request received')
-            pair = (b_keys[w][0], b_keys[w][1])
+            pair = (pickle.dumps(b_keys[w][0]), pickle.dumps(b_keys[w][1]))
             ot_alice(socket, pair)
 
         result = socket.receive()
@@ -100,7 +101,7 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
             socket.send(w)
             # Perform oblivious transfer
             util.log('OT Request sent')
-            b_inputs_encr[w] = ot_bob(socket, b_input)
+            b_inputs_encr[w] = pickle.loads(ot_bob(socket, b_input))
 
         # Evaluate circuit using Alice and Bob's inputs
         result = yao.evaluate(circuit, g_tables, pbits_out, \
