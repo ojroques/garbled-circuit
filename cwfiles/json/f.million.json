@@ -1,4 +1,5 @@
 { 
+    "+" : "Olivier Roques (or518), Emmanuelle Risson (ear3218)",
     "circuits" : [
         { 
             "name"  : "millionaire problem",

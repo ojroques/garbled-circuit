@@ -1,6 +1,15 @@
 # Secure Multi-Party Computation
 
 ## Contents
+* [Introduction](#introduction)
+* [Installation](#installation)
+* [Usage](#usage)
+    * [Over the network](#over-the-network)
+    * [Local tests](#local-tests)
+* [Architecture](#architecture)
+* [JSON circuit](#json-circuit)
+* [Example](#example)
+* [Authors](#authors)
 
 ## Introduction
 This project implements a [two-party secure function evaluation](https://en.wikipedia.org/wiki/Secure_two-party_computation) using Yao's [garbled circuit](https://en.wikipedia.org/wiki/Garbled_circuit) protocol. It has been developed on November 2018 for the Privacy Engineering course of Imperial College London (CO408). 
@@ -21,10 +30,13 @@ Clone this repository wherever you want and follow the instructions in the next 
 1. Replace network info with your own in `util.py`
 2. Make sure `OBLIVIOUS_TRANSFERS` is set to `True` in `ot.py`.
 3. Run the server (Bob):
+
 ```sh
 make bob
 ```
-4. Run the client with the path of the json circuit as argument:
+
+4. Run the client with the path of a json circuit as argument:
+
 ```sh
 make alice <json_circuit>
 ```
@@ -33,6 +45,7 @@ You can also run:
 ```sh
 make alice
 ```
+
 to evaluate all basic circuits present in `json/`.
 
 Alice will print the truth table of the circuit for all combination of Alice-Bob inputs. Alice does not know Bob's inputs but for the purpose of printing the truth table only, Alice assumes that Bob's inputs follow a specific order.
@@ -41,6 +54,7 @@ Alice will print the truth table of the circuit for all combination of Alice-Bob
 1. To print the truth table of a circuit, set `PRINT_MODE` to `0` in `main.py`
 2. To print a clear representation of the garbled tables of a circuit, set `PRINT_MODE` to `1` in `main.py`
 3. Run:
+
 ```sh
 python3 main.py local <json_circuit>
 ```
@@ -51,14 +65,14 @@ The project is composed of 4 python files:
 * `yao.py`: implements:
     * Encryption and decryption functions
     * Evaluation function used by Bob to get the results of a yao circuit
-    * `GarbledCircuit` which generates the keys, p-bits and garbled gates of the circuit
-    * `GarbledGate` which generates the garbled table of a gate
+    * `GarbledCircuit` class which generates the keys, p-bits and garbled gates of the circuit
+    * `GarbledGate` class which generates the garbled table of a gate
 * `ot.py`: implements the oblivious transfer protocol as well as wrappers to send and receive yao circuit, inputs and results.
 * `util.py`: implements many functions related to network communications and asymmetric key generation
 
 A `Makefile` is present to make execution easier. A few basic function converted into boolean circuits are given as examples in `json/`.
 
-## JSON Circuit
+## JSON circuit
 A function is represented as a boolean circuit using the gates available:
 * NOT (1-input gate)
 * AND
@@ -147,5 +161,5 @@ GATE: 7, TYPE: OR
 ```
 
 ## Authors
-* Olivier Roques: or518@imperial.ac.uk
-* Emmanuelle Risson: ear3218@imperial.ac.uk
+* Olivier Roques: <or518@imperial.ac.uk>
+* Emmanuelle Risson: <ear3218@imperial.ac.uk>
