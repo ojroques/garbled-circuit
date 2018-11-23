@@ -30,16 +30,16 @@ Clone this repository wherever you want and follow the instructions in the next 
 1. Replace network info with your own in `util.py`
 2. Make sure `OBLIVIOUS_TRANSFERS` is set to `True` in `ot.py`.
 3. Run the server (Bob):
-```
-make bob
-```
+    ```sh
+    make bob
+    ```
 4. Run the client with the path of a json circuit as argument:
-```
-make alice <json_circuit>
-```
+    ```sh
+    make alice <json_circuit>
+    ```
 
 You can also run:
-```
+```sh
 make alice
 ```
 
@@ -51,9 +51,9 @@ Alice will print the truth table of the circuit for all combination of Alice-Bob
 1. To print the truth table of a circuit, set `PRINT_MODE` to `0` in `main.py`
 2. To print a clear representation of the garbled tables of a circuit, set `PRINT_MODE` to `1` in `main.py`
 3. Run:
-```
-python3 main.py local <json_circuit>
-```
+    ```sh
+    python3 main.py local <json_circuit>
+    ```
 
 ## Architecture
 The project is composed of 4 python files:
@@ -104,7 +104,7 @@ Here is an example of a function represented as a json circuit:
 ```
 
 ## Example
-Here is the truth table of the previous json circuit printed by the program :
+Here is the truth table of the previous json circuit printed by the program:
 ```sh
 ======= Example circuit =======
   Alice[1, 2] = 0 0  Bob[3, 4] = 0 0   Outputs[7] = 0
@@ -126,7 +126,7 @@ Here is the truth table of the previous json circuit printed by the program :
 ```
 
 And here is the clear representation of the garbled gates (`PRINT_MODE` set to `1`):
-```
+```sh
 NAME: Example circuit
 P-BITS:
 * 1: 0
