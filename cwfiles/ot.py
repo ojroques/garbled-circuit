@@ -15,36 +15,6 @@ import pickle
 
 OBLIVIOUS_TRANSFERS = True
 
-def send_yao_circuit(socket, circuit, g_tables, pbits_out):
-    """Send Yao circuit Bob.
-
-    Keyword arguments:
-    socket    -- socket for exchanges between A and B
-    circuit   -- dict containing circuit spec
-    g_tables  -- garbled tables of yao circuit
-    pbits_out -- p-bits of outputs
-    """
-    socket.send_wait(circuit)
-    socket.send_wait(g_tables)
-    socket.send_wait(pbits_out)
-
-def receive_yao_circuit(socket):
-    """Receive Yao circuit from Alice.
-
-    Keyword arguments:
-    socket  -- socket for exchanges between A and B
-
-    Returns:
-    (a, b, c) -- circuit spec, garbled tables, p-bits of outputs
-    """
-    circuit   = socket.receive()
-    socket.send(True)
-    g_tables  = socket.receive()
-    socket.send(True)
-    pbits_out = socket.receive()
-    socket.send(True)
-    return (circuit, g_tables, pbits_out)
-
 # YAO PROTOCOL WITH OBLIVIOUS TRANSFER
 if OBLIVIOUS_TRANSFERS: # __________________________________________________
 
