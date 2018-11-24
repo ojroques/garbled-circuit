@@ -49,7 +49,17 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         socket -- socket for exchanges between A and B
         msgs   -- a pair (msg1, msg2) to suggest to Bob
         """
-        pass
+        G = util.PrimeGroup()
+        c = G.gen_pow(G.rand_int())
+        socket.send(c)
+        h0 = socket.receive()
+        h1 = G.mul(c, G.inv(h0))
+        k = G.rand_int()
+        c1 = G.gen_pow(k)
+        e_0 = util.xor_bytes(msgs[0], utils.ot_hash(G.pow(h0, k),len(msgs[0])))
+        e_1 = util.xor_bytes(msgs[1], utils.ot_hash(G.pow(h1, k),len(msgs[1])))
+        to_send = (c1, e_0, e_1)
+        socket.send(to_send)
 
     def send_result(socket, circuit, g_tables, pbits_out, b_inputs):
         """Evaluate circuit and send the result to Alice.
@@ -88,7 +98,31 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         Returns:
         msg -- the message selected by Bob
         """
-        pass
+        c = socket.receive()
+        G = util.PrimeGroup()
+        x = G.rand_int()
+        hb = G.gen_pow(x)
+        h1-b = G.mul(c, G.inv(hb))
+        if b==0:
+            h = [hb, h1-b]
+        if b==1:
+            h = [h1-b, hb]
+        else:
+            print('Error in b (neither 0 nor 1) in first if condition')
+            return
+        socket.send(h[0])
+        being_received = socket.receive()
+        c1 = being_received[0]
+        e_0 = being_received[1]
+        e_1 = being_received[2]
+        if b==0:
+            mb = util.xor_bytes(e_0, utils.ot_hash(G.pow(c1, x),len(e_0)))
+        if b==1:
+            mb = util.xor_bytes(e_1, utils.ot_hash(G.pow(c1, x),len(e_1)))
+        else:
+            print('Error in b (neither 0 nor 1) in second if condition')
+            return
+        return mb
 
 # YAO PROTOCOL WITHOUT OBLIVIOUS TRANSFER -- FOR LOCAL TESTS
 else: # ____________________________________________________________________
