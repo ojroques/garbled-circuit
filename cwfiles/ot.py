@@ -50,14 +50,16 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         msgs   -- a pair (msg1, msg2) to suggest to Bob
         """
         G = util.PrimeGroup()
+        socket.send(G)
+        socket.receive()
         c = G.gen_pow(G.rand_int())
         socket.send(c)
         h0 = socket.receive()
         h1 = G.mul(c, G.inv(h0))
         k = G.rand_int()
         c1 = G.gen_pow(k)
-        e_0 = util.xor_bytes(msgs[0], utils.ot_hash(G.pow(h0, k),len(msgs[0])))
-        e_1 = util.xor_bytes(msgs[1], utils.ot_hash(G.pow(h1, k),len(msgs[1])))
+        e_0 = util.xor_bytes(msgs[0], util.ot_hash(G.pow(h0, k),len(msgs[0])))
+        e_1 = util.xor_bytes(msgs[1], util.ot_hash(G.pow(h1, k),len(msgs[1])))
         to_send = (c1, e_0, e_1)
         socket.send(to_send)
 
@@ -98,15 +100,16 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         Returns:
         msg -- the message selected by Bob
         """
+        G = socket.receive()
+        socket.send(True)
         c = socket.receive()
-        G = util.PrimeGroup()
         x = G.rand_int()
         hb = G.gen_pow(x)
-        h1-b = G.mul(c, G.inv(hb))
+        h1_b = G.mul(c, G.inv(hb))
         if b==0:
-            h = [hb, h1-b]
-        if b==1:
-            h = [h1-b, hb]
+            h = [hb, h1_b]
+        elif b==1:
+            h = [h1_b, hb]
         else:
             print('Error in b (neither 0 nor 1) in first if condition')
             return
@@ -116,9 +119,9 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         e_0 = being_received[1]
         e_1 = being_received[2]
         if b==0:
-            mb = util.xor_bytes(e_0, utils.ot_hash(G.pow(c1, x),len(e_0)))
-        if b==1:
-            mb = util.xor_bytes(e_1, utils.ot_hash(G.pow(c1, x),len(e_1)))
+            mb = util.xor_bytes(e_0, util.ot_hash(G.pow(c1, x),len(e_0)))
+        elif b==1:
+            mb = util.xor_bytes(e_1, util.ot_hash(G.pow(c1, x),len(e_1)))
         else:
             print('Error in b (neither 0 nor 1) in second if condition')
             return
