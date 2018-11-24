@@ -50,10 +50,13 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         msgs   -- a pair (msg1, msg2) to suggest to Bob
         """
         G = util.PrimeGroup()
+        #Send the prime group to Bob
         socket.send(G)
         socket.receive()
         c = G.gen_pow(G.rand_int())
+        #Send c to Bob
         socket.send(c)
+        #Receive h0 from Bob
         h0 = socket.receive()
         h1 = G.mul(c, G.inv(h0))
         k = G.rand_int()
@@ -61,6 +64,7 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         e_0 = util.xor_bytes(msgs[0], util.ot_hash(G.pow(h0, k),len(msgs[0])))
         e_1 = util.xor_bytes(msgs[1], util.ot_hash(G.pow(h1, k),len(msgs[1])))
         to_send = (c1, e_0, e_1)
+        #Send c1, e0 and e1 to Bob
         socket.send(to_send)
 
     def send_result(socket, circuit, g_tables, pbits_out, b_inputs):
@@ -100,8 +104,10 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         Returns:
         msg -- the message selected by Bob
         """
+        #Receive the prime group from Alice
         G = socket.receive()
         socket.send(True)
+        #Receive c from ALice
         c = socket.receive()
         x = G.rand_int()
         hb = G.gen_pow(x)
@@ -113,7 +119,9 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         else:
             print('Error in b (neither 0 nor 1) in first if condition')
             return
+        #Send h0 to Alice
         socket.send(h[0])
+        #Receive c1, e0 and e1 from Alice
         being_received = socket.receive()
         c1 = being_received[0]
         e_0 = being_received[1]
