@@ -49,23 +49,20 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         socket -- socket for exchanges between A and B
         msgs   -- a pair (msg1, msg2) to suggest to Bob
         """
+        # Create the prime group and send it to Bob
         G = util.PrimeGroup()
-        #Send the prime group to Bob
-        socket.send(G)
-        socket.receive()
-        c = G.gen_pow(G.rand_int())
-        #Send c to Bob
-        socket.send(c)
-        #Receive h0 from Bob
-        h0 = socket.receive()
+        socket.send_wait(G)
+
+        # OT protocol based on
+        # Nigel Smart’s "Cryptography Made Simple" implementation
+        c  = G.gen_pow(G.rand_int())
+        h0 = socket.send_wait(c)
         h1 = G.mul(c, G.inv(h0))
-        k = G.rand_int()
+        k  = G.rand_int()
         c1 = G.gen_pow(k)
-        e_0 = util.xor_bytes(msgs[0], util.ot_hash(G.pow(h0, k),len(msgs[0])))
-        e_1 = util.xor_bytes(msgs[1], util.ot_hash(G.pow(h1, k),len(msgs[1])))
-        to_send = (c1, e_0, e_1)
-        #Send c1, e0 and e1 to Bob
-        socket.send(to_send)
+        e0 = util.xor_bytes(msgs[0], util.ot_hash(G.pow(h0, k), len(msgs[0])))
+        e1 = util.xor_bytes(msgs[1], util.ot_hash(G.pow(h1, k), len(msgs[1])))
+        socket.send((c1, e_0, e_1))
 
     def send_result(socket, circuit, g_tables, pbits_out, b_inputs):
         """Evaluate circuit and send the result to Alice.
@@ -104,35 +101,24 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         Returns:
         msg -- the message selected by Bob
         """
-        #Receive the prime group from Alice
+        # Receive the prime group from Alice
         G = socket.receive()
         socket.send(True)
-        #Receive c from ALice
-        c = socket.receive()
-        x = G.rand_int()
-        hb = G.gen_pow(x)
-        h1_b = G.mul(c, G.inv(hb))
-        if b==0:
-            h = [hb, h1_b]
-        elif b==1:
-            h = [h1_b, hb]
-        else:
-            print('Error in b (neither 0 nor 1) in first if condition')
-            return
-        #Send h0 to Alice
-        socket.send(h[0])
-        #Receive c1, e0 and e1 from Alice
-        being_received = socket.receive()
-        c1 = being_received[0]
-        e_0 = being_received[1]
-        e_1 = being_received[2]
-        if b==0:
-            mb = util.xor_bytes(e_0, util.ot_hash(G.pow(c1, x),len(e_0)))
-        elif b==1:
-            mb = util.xor_bytes(e_1, util.ot_hash(G.pow(c1, x),len(e_1)))
-        else:
-            print('Error in b (neither 0 nor 1) in second if condition')
-            return
+
+        # OT protocol based on
+        # Nigel Smart’s "Cryptography Made Simple" implementation
+        c      = socket.receive()
+        x      = G.rand_int()
+        h_b    = G.gen_pow(x)
+        h_notb = G.mul(c, G.inv(h_b))
+
+        if b: h = h_notb
+        else: h = h_b
+        c1, e0, e1 = socket.send_wait(h)
+
+        if b: mb = util.xor_bytes(e1, util.ot_hash(G.pow(c1, x), len(e1)))
+        else: mb = util.xor_bytes(e0, util.ot_hash(G.pow(c1, x), len(e0)))
+
         return mb
 
 # YAO PROTOCOL WITHOUT OBLIVIOUS TRANSFER -- FOR LOCAL TESTS

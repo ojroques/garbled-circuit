@@ -12,7 +12,7 @@
 * [Authors](#authors)
 
 ## Introduction
-This project implements a [two-party secure function evaluation](https://en.wikipedia.org/wiki/Secure_two-party_computation) using Yao's [garbled circuit](https://en.wikipedia.org/wiki/Garbled_circuit) protocol. It has been developed on November 2018 for the Privacy Engineering course of Imperial College London (CO408). 
+This project implements a [two-party secure function evaluation](https://en.wikipedia.org/wiki/Secure_two-party_computation) using Yao's [garbled circuit](https://en.wikipedia.org/wiki/Garbled_circuit) protocol. It has been developed on November 2018 for the Privacy Engineering course of Imperial College London (CO408).
 
 In our model, two parties Alice and Bob compute a function on their inputs without sharing the value of their inputs with the opposing party. Alice is the circuit creator while Bob is the circuit evaluator. Alice creates the yao circuit and sends it to Bob along with her encrypted inputs. Bob then computes the results and sends them back to Alice.
 
@@ -72,7 +72,7 @@ A few assumptions are made:
 
 Here is an example of a function represented as a json circuit:
 ```json
-{ 
+{
     "circuits" : [
         {
             "name"  : "Example circuit",

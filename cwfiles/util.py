@@ -1,4 +1,3 @@
-
 # yao garbled circuit evaluation v1. simple version based on smart
 # naranker dulay, dept of computing, imperial college, october 2018
 
@@ -43,7 +42,7 @@ def gen_prime(num_bits):		# random 'bits-sized' prime
   r = secrets.randbits(num_bits)
   log(f'  nextprime {r} ({r.bit_length()} bits)', verbose=3)
   return next_prime(r)
-  # should really ensure that prime-1 has a large prime factor, 
+  # should really ensure that prime-1 has a large prime factor,
   # see free handbook of applied cryptography p164 for a discussion
 
 def xor_bytes(seq1, seq2):		# xor two byte sequences
@@ -70,7 +69,7 @@ class PrimeGroup:
     self.generator = self.find_generator()
     log(f'  Prime Group {self.prime} Generator {self.generator}', verbose=3)
 
-  def mul(self, num1, num2):		# multiplication 
+  def mul(self, num1, num2):		# multiplication
     return (num1 * num2) % self.prime
 
   def pow(self, base, exponent):	# exponentiation
@@ -79,17 +78,17 @@ class PrimeGroup:
   def gen_pow(self, exponent):		# generator exponentiation
     return pow(self.generator, exponent, self.prime)
 
-  def inv(self, num): 			# multiplicative inverse 
+  def inv(self, num): 			# multiplicative inverse
     return pow(num, self.primeM2, self.prime)
 
-  def rand_int(self):  			# random int in [1, prime-1] 
+  def rand_int(self):  			# random int in [1, prime-1]
     return random.randint(1, self.primeM1)
     # not 0 since gcd(int, prime)==1 for multiplicative group elements
 
   def find_generator(self):		# find random generator for group
     # see free handbook of applied cryptography p163 for a description
     factors = sympy.primefactors(self.primeM1)
-    while True:				# there are numerous generators 
+    while True:				# there are numerous generators
       candidate = self.rand_int()	# so we'll find in a few tries
       log(f'  candidate {candidate}', verbose=3)
       for factor in factors:
@@ -106,7 +105,7 @@ else:
 # sockets __________________________________________________________________
 
 LOCAL_PORT  = 4080			# change if port clashes
-SERVER_PORT = 4080			# change if using port redirection 
+SERVER_PORT = 4080			# change if using port redirection
 SERVER_HOST = 'localhost'		# change if server on different host
 # SERVER_HOST = '0.tcp.au.ngrok.io' 	# relay through amazonws in Sydney
 
