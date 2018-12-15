@@ -62,7 +62,7 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         c1 = G.gen_pow(k)
         e0 = util.xor_bytes(msgs[0], util.ot_hash(G.pow(h0, k), len(msgs[0])))
         e1 = util.xor_bytes(msgs[1], util.ot_hash(G.pow(h1, k), len(msgs[1])))
-        socket.send((c1, e_0, e_1))
+        socket.send((c1, e0, e1))
 
     def send_result(socket, circuit, g_tables, pbits_out, b_inputs):
         """Evaluate circuit and send the result to Alice.
@@ -112,12 +112,12 @@ if OBLIVIOUS_TRANSFERS: # __________________________________________________
         h_b    = G.gen_pow(x)
         h_notb = G.mul(c, G.inv(h_b))
 
-        if b: h = h_notb
-        else: h = h_b
-        c1, e0, e1 = socket.send_wait(h)
-
-        if b: mb = util.xor_bytes(e1, util.ot_hash(G.pow(c1, x), len(e1)))
-        else: mb = util.xor_bytes(e0, util.ot_hash(G.pow(c1, x), len(e0)))
+        if b:
+            c1, e0, e1 = socket.send_wait(h_notb)
+            mb = util.xor_bytes(e1, util.ot_hash(G.pow(c1, x), len(e1)))
+        else:
+            c1, e0, e1 = socket.send_wait(h_b)
+            mb = util.xor_bytes(e0, util.ot_hash(G.pow(c1, x), len(e0)))
 
         return mb
 

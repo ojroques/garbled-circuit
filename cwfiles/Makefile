@@ -13,7 +13,7 @@ clean:
 	rm -rf __pycache__ .mypy_cache
 
 main.py: yao.py ot.py util.py
-yao.py: util.py crypto.py
+yao.py: util.py
 ot.py:	util.py
 
 alice:	main.py
