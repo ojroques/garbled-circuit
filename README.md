@@ -27,10 +27,9 @@ Clone this repository wherever you want and follow the instructions in the next 
 ## Usage
 
 #### Over the network
-1. Replace network info with your own in **util.py**
-2. Make sure `OBLIVIOUS_TRANSFERS` is set to `True` in **ot.py**.
-3. Run the server (Bob): `make bob`
-4. Run the client with the path of a json circuit as argument: `make alice <json_circuit>`
+1. Replace network info with your own in **util.py** (local network by default)
+2. Run the server (Bob): `make bob`
+3. Run the client with the path of a json circuit as argument: `make alice <json_circuit>`
 
 You can also run `make alice` to evaluate all basic circuits present in **json/**.
 
@@ -43,14 +42,14 @@ Alice will print the truth table of the circuit for all combination of Alice-Bob
 
 ## Architecture
 The project is composed of 4 python files:
-* **main.py**: implements Alice side, Bob side and local tests.
-* **yao.py**: implements:
+* **main.py** implements Alice side, Bob side and local tests.
+* **yao.py** implements:
     * Encryption and decryption functions
     * Evaluation function used by Bob to get the results of a yao circuit
     * `GarbledCircuit` class which generates the keys, p-bits and garbled gates of the circuit
     * `GarbledGate` class which generates the garbled table of a gate
-* **ot.py**: implements the oblivious transfer protocol as well as wrappers to send and receive yao circuit, inputs and results.
-* **util.py**: implements many functions related to network communications and asymmetric key generation
+* **ot.py** implements the oblivious transfer protocol as well as wrappers to send and receive yao circuit, inputs and results.
+* **util.py** implements many functions related to network communications and asymmetric key generation
 
 A **Makefile** is present to make execution easier. A few basic functions converted into boolean circuits are given as examples in **json/**.
 
