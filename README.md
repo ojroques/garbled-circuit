@@ -29,7 +29,7 @@ Clone this repository wherever you want and follow the instructions in the next 
 #### Over the network
 1. Replace network info with your own in **util.py** (local network by default)
 2. Run the server (Bob): `make bob`
-3. Run the client with the path of a json circuit as argument: `make alice <json_circuit>`
+3. Run the client with the path of a json circuit as argument: `make <circuit-name>` e.g. `make add`
 
 You can also run `make alice` to evaluate all basic circuits present in **json/**.
 
