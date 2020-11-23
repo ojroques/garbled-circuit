@@ -1,65 +1,61 @@
-# yao garbled circuit evaluation v1. simple version based on smart
-# naranker dulay, dept of computing, imperial college, october 2018
-
-ALICE   = python3 main.py alice	# circuit generator (client)
-BOB     = python3 main.py bob	# circuit evaluator (server)
-LOCAL   = python3 main.py local	# local, not client-server, no transfers
-ONEFILE	= ${ALICE}		        # test 1 file, choose ALICE or LOCAL
+ALICE = python3 main.py alice  # circuit generator (client)
+BOB = python3 main.py bob      # circuit evaluator (server)
+LOCAL = python3 main.py local  # local tests
+ONEFILE = ${ALICE}             # choose ALICE or LOCAL
 
 default:
-	@echo '  >> make {alice, bob, local}'
+	@echo 'Usage 1: make {alice, bob, local}'
+	@echo 'Usage 2: make {circuit}'
 
 clean:
-	rm -rf __pycache__ .mypy_cache
+	rm -rf __pycache__
 
-main.py: yao.py ot.py util.py
-yao.py: util.py
-ot.py:	util.py
+alice:
+	${ALICE} -c circuits/add.json
+	${ALICE} -c circuits/bool.json
+	${ALICE} -c circuits/cmp.json
+	${ALICE} -c circuits/max.json
+	${ALICE} -c circuits/million.json
+	${ALICE} -c circuits/min.json
+	${ALICE} -c circuits/nand.json
+	${ALICE} -c circuits/smart.json
 
-alice:	main.py
-	${ALICE} json/f.bool.json
-	${ALICE} json/f.nand.json
-	${ALICE} json/f.add.json
-	${ALICE} json/f.cmp.json
-	${ALICE} json/f.max.json
-	${ALICE} json/f.min.json
-	${ALICE} json/f.smart.json
 
-bob:	main.py
+bob:
 	${BOB}
 
-local:	main.py
-	${LOCAL} json/f.bool.json
-	${LOCAL} json/f.nand.json
-	${LOCAL} json/f.add.json
-	${LOCAL} json/f.cmp.json
-	${LOCAL} json/f.max.json
-	${LOCAL} json/f.min.json
-	${LOCAL} json/f.smart.json
+local:
+	${LOCAL} -c circuits/add.json
+	${LOCAL} -c circuits/bool.json
+	${LOCAL} -c circuits/cmp.json
+	${LOCAL} -c circuits/max.json
+	${LOCAL} -c circuits/million.json
+	${LOCAL} -c circuits/min.json
+	${LOCAL} -c circuits/nand.json
 
-bool:	main.py
-	${ONEFILE} json/f.bool.json
+add:
+	${ONEFILE} -c circuits/add.json
 
-nand:	main.py
-	${ONEFILE} json/f.nand.json
+bool:
+	${ONEFILE} -c circuits/bool.json
 
-add:	main.py
-	${ONEFILE} json/f.add.json
+cmp:
+	${ONEFILE} -c circuits/cmp.json
 
-cmp:	main.py
-	${ONEFILE} json/f.cmp.json
+max:
+	${ONEFILE} -c circuits/max.json
 
-max:	main.py
-	${ONEFILE} json/f.max.json
+million:
+	${ONEFILE} -c circuits/million.json
 
-min:	main.py
-	${ONEFILE} json/f.min.json
+min:
+	${ONEFILE} -c circuits/min.json
 
-rich:   main.py
-	$(ONEFILE) json/f.rich.json
+nand:
+	${ONEFILE} -c circuits/nand.json
 
-smart:	main.py
-	${ONEFILE} json/f.smart.json
+rich:
+	${ONEFILE} -c circuits/rich.json
 
-million:main.py
-	${ONEFILE} json/f.million.json
+smart:
+	${ONEFILE} -c circuits/smart.json

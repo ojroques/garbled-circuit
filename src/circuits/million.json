@@ -1,0 +1,22 @@
+{
+  "name": "million",
+  "circuits": [
+    {
+      "id": "Millionaire problem",
+      "alice": [1, 2],
+      "bob": [3, 4],
+      "out": [13],
+      "gates": [
+        {"id": 5, "type": "NAND", "in": [3,4]},
+        {"id": 6, "type": "AND", "in": [1,5]},
+        {"id": 7, "type": "AND", "in": [1,2]},
+        {"id": 8, "type": "NOT", "in": [3]},
+        {"id": 9, "type": "NOT", "in": [4]},
+        {"id": 10, "type": "OR", "in": [2,9]},
+        {"id": 11, "type": "AND", "in": [8,10]},
+        {"id": 12, "type": "OR", "in": [6,7]},
+        {"id": 13, "type": "OR", "in": [11,12]}
+      ]
+    }
+  ]
+}

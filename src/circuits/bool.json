@@ -1,0 +1,104 @@
+{
+  "name": "bool",
+  "circuits": [
+    {
+      "id": "AND gate",
+      "alice": [1],
+      "bob": [2],
+      "out": [3],
+      "gates": [
+        {"id": 3, "type": "AND", "in": [1, 2]}
+      ]
+    },
+    {
+      "id": "OR gate",
+      "alice": [1],
+      "bob": [2],
+      "out": [3],
+      "gates": [
+        {"id": 3, "type": "OR", "in": [1, 2]}
+      ]
+    },
+    {
+      "id": "NOT gate",
+      "alice": [1],
+      "out": [2],
+      "gates": [
+        {"id": 2, "type": "NOT", "in": [1]}
+      ]
+    },
+    {
+      "id": "XOR gate",
+      "alice": [1],
+      "bob": [2],
+      "out": [3],
+      "gates": [
+        {"id": 3, "type": "XOR", "in": [1, 2]}
+      ]
+    },
+    {
+      "id": "OR gate",
+      "alice": [1],
+      "bob": [2],
+      "out": [3],
+      "gates": [
+        {"id": 3, "type": "OR", "in": [1, 2]}
+      ]
+    },
+    {
+      "id": "NOR gate",
+      "alice": [1],
+      "bob": [2],
+      "out": [3],
+      "gates": [
+        {"id": 3, "type": "NOR", "in": [1, 2]}
+      ]
+    },
+    {
+      "id": "NAND gate",
+      "alice": [1],
+      "bob": [2],
+      "out": [3],
+      "gates": [
+        {"id": 3, "type": "NAND", "in": [1, 2]}
+      ]
+    },
+    {
+      "id": "XNOR gate",
+      "alice": [1],
+      "bob": [2],
+      "out": [3],
+      "gates": [
+        {"id": 3, "type": "XNOR", "in": [1, 2]}
+      ]
+    },
+    {
+      "id": "A implies B",
+      "alice": [1],
+      "bob": [2],
+      "out": [4],
+      "gates": [
+        {"id": 3, "type": "NOT", "in": [1]},
+        {"id": 4, "type": "OR", "in": [2, 3]}
+      ]
+    },
+    {
+      "id": "AA' complement",
+      "alice": [1],
+      "out": [3],
+      "gates": [
+        {"id": 2, "type": "NOT", "in": [1]},
+        {"id": 3, "type": "AND", "in": [1, 2]}
+      ]
+    },
+    {
+      "id": "A+A' complement",
+      "alice": [1],
+      "out": [3],
+      "gates": [
+        {"id": 2, "type": "NOT", "in": [1]},
+        {"id": 3, "type": "OR", "in": [1, 2]}
+      ]
+    }
+  ]
+}

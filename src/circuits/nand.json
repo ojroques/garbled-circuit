@@ -1,0 +1,71 @@
+{
+  "name": "nand",
+  "circuits": [
+    {
+      "id": "NOT using NAND",
+      "alice": [1],
+      "out": [2],
+      "gates": [
+        {"id": 2, "type": "NAND", "in": [1, 1]}
+      ]
+    },
+    {
+      "id": "AND using NAND",
+      "alice": [1],
+      "bob": [2],
+      "out": [4],
+      "gates": [
+        {"id": 3, "type": "NAND", "in": [1, 2]},
+        {"id": 4, "type": "NAND", "in": [3, 3]}
+      ]
+    },
+    {
+      "id": "OR using NAND",
+      "alice": [1],
+      "bob": [2],
+      "out": [5],
+      "gates": [
+        {"id": 3, "type": "NAND", "in": [1, 1]},
+        {"id": 4, "type": "NAND", "in": [2, 2]},
+        {"id": 5, "type": "NAND", "in": [3, 4]}
+      ]
+    },
+    {
+      "id": "NOR using NAND",
+      "alice": [1],
+      "bob": [2],
+      "out": [6],
+      "gates": [
+        {"id": 3, "type": "NAND", "in": [1, 1]},
+        {"id": 4, "type": "NAND", "in": [2, 2]},
+        {"id": 5, "type": "NAND", "in": [3, 4]},
+        {"id": 6, "type": "NAND", "in": [5, 5]}
+      ]
+    },
+    {
+      "id": "XOR using NAND",
+      "alice": [1],
+      "bob": [2],
+      "out": [6],
+      "gates": [
+        {"id": 3, "type": "NAND", "in": [1, 2]},
+        {"id": 4, "type": "NAND", "in": [1, 3]},
+        {"id": 5, "type": "NAND", "in": [2, 3]},
+        {"id": 6, "type": "NAND", "in": [4, 5]}
+      ]
+    },
+    {
+      "id": "XNOR using NAND",
+      "alice": [1],
+      "bob": [2],
+      "out": [7],
+      "gates": [
+        {"id": 3, "type": "NAND", "in": [1, 2]},
+        {"id": 4, "type": "NAND", "in": [1, 3]},
+        {"id": 5, "type": "NAND", "in": [2, 3]},
+        {"id": 6, "type": "NAND", "in": [4, 5]},
+        {"id": 7, "type": "NAND", "in": [6, 6]}
+      ]
+    }
+  ]
+}
