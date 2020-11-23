@@ -1,153 +1,125 @@
-"""
-Emmanuelle Risson : ear3218
-Olivier Roques    : or518
-
-yao garbled circuit evaluation v1. simple version based on smart
-naranker dulay, dept of computing, imperial college, october 2018
-"""
-
+import hashlib
+import logging
+import pickle
 import util
 import yao
-import pickle
 
-# yao garbled circuit evaluation v1. simple version based on smart
-# naranker dulay, dept of computing, imperial college, october 2018
 
-OBLIVIOUS_TRANSFERS = True
+class ObliviousTransfer:
+    def __init__(self, socket, enabled=True):
+        self.socket = socket
+        self.enabled = enabled
 
-# YAO PROTOCOL WITH OBLIVIOUS TRANSFER
-if OBLIVIOUS_TRANSFERS: # __________________________________________________
-
-    def get_result(socket, a_inputs, b_keys):
+    def get_result(self, a_inputs, b_keys):
         """Send Alice's inputs and retrieve Bob's result of evaluation.
 
-        Keyword arguments:
-        socket   -- socket for exchanges between A and B
-        a_inputs -- dict mapping Alice's wires to (key, encr_bit) inputs
-        b_keys   -- dict mapping each Bob's wire to a pair (key, encr_bit)
-
-        Returns
-        result -- received result of the yao circuit evaluation
-        """
-        socket.send(a_inputs)
-
-        for _ in range(len(b_keys)):
-            # Receive the gate ID on which to perform OT
-            w = socket.receive()
-            # Perform oblivious transfer
-            util.log('OT Request received')
-            pair = (pickle.dumps(b_keys[w][0]), pickle.dumps(b_keys[w][1]))
-            ot_alice(socket, pair)
-
-        result = socket.receive()
-        return result
-
-    def ot_alice(socket, msgs):
-        """Oblivious transfer, Alice's side.
-
-        Keyword arguments:
-        socket -- socket for exchanges between A and B
-        msgs   -- a pair (msg1, msg2) to suggest to Bob
-        """
-        # Create the prime group and send it to Bob
-        G = util.PrimeGroup()
-        socket.send_wait(G)
-
-        # OT protocol based on
-        # Nigel Smart’s "Cryptography Made Simple" implementation
-        c  = G.gen_pow(G.rand_int())
-        h0 = socket.send_wait(c)
-        h1 = G.mul(c, G.inv(h0))
-        k  = G.rand_int()
-        c1 = G.gen_pow(k)
-        e0 = util.xor_bytes(msgs[0], util.ot_hash(G.pow(h0, k), len(msgs[0])))
-        e1 = util.xor_bytes(msgs[1], util.ot_hash(G.pow(h1, k), len(msgs[1])))
-        socket.send((c1, e0, e1))
-
-    def send_result(socket, circuit, g_tables, pbits_out, b_inputs):
-        """Evaluate circuit and send the result to Alice.
-
-        Keyword arguments:
-        socket    -- socket for exchanges between A and B
-        circuit   -- dict containing circuit spec
-        g_tables  -- garbled tables of yao circuit
-        pbits_out -- p-bits of outputs
-        b_inputs  -- dict mapping Bob's wires to (clear) input bits
-        """
-        # dict mapping Alice's wires to (key, encr_bit) inputs
-        a_inputs      = socket.receive()
-        # dict mapping Bob's wires to (key, encr_bit) inputs
-        b_inputs_encr = {}
-
-        for w, b_input in b_inputs.items():
-            # Send the gate ID on which to perform OT
-            socket.send(w)
-            # Perform oblivious transfer
-            util.log('OT Request sent')
-            b_inputs_encr[w] = pickle.loads(ot_bob(socket, b_input))
-
-        # Evaluate circuit using Alice and Bob's inputs
-        result = yao.evaluate(circuit, g_tables, pbits_out, \
-                              a_inputs, b_inputs_encr)
-        socket.send(result)
-
-    def ot_bob(socket, b):
-        """Oblivious transfer, Bob's side.
-
-        Keyword arguments:
-        socket -- socket for exchanges between A and B
-        b      -- Bob's input bit used to select one of Alice's messages
+        Args:
+            a_inputs: A dict mapping Alice's wires to (key, encr_bit) inputs.
+            b_keys: A dict mapping each Bob's wire to a pair (key, encr_bit).
 
         Returns:
-        msg -- the message selected by Bob
+            The result of the yao circuit evaluation.
         """
-        # Receive the prime group from Alice
-        G = socket.receive()
-        socket.send(True)
-
-        # OT protocol based on
-        # Nigel Smart’s "Cryptography Made Simple" implementation
-        c      = socket.receive()
-        x      = G.rand_int()
-        h_b    = G.gen_pow(x)
-        h_notb = G.mul(c, G.inv(h_b))
-
-        if b:
-            c1, e0, e1 = socket.send_wait(h_notb)
-            mb = util.xor_bytes(e1, util.ot_hash(G.pow(c1, x), len(e1)))
-        else:
-            c1, e0, e1 = socket.send_wait(h_b)
-            mb = util.xor_bytes(e0, util.ot_hash(G.pow(c1, x), len(e0)))
-
-        return mb
-
-# YAO PROTOCOL WITHOUT OBLIVIOUS TRANSFER -- FOR LOCAL TESTS
-else: # ____________________________________________________________________
-
-    def get_result(socket, a_inputs, b_keys):
-        socket.send(a_inputs)
+        logging.debug("Sending inputs to Bob")
+        self.socket.send(a_inputs)
 
         for _ in range(len(b_keys)):
-            w = socket.receive()
-            pair = (b_keys[w][0], b_keys[w][1])
-            # The pair of keys is directly sent to Bob
-            socket.send(pair)
+            w = self.socket.receive()  # receive gate ID where to perform OT
+            logging.debug(f"Received gate ID {w}")
 
-        result = socket.receive()
-        return result
+            if self.enabled:  # perform oblivious transfer
+                pair = (pickle.dumps(b_keys[w][0]), pickle.dumps(b_keys[w][1]))
+                self.ot_garbler(pair)
+            else:
+                to_send = (b_keys[w][0], b_keys[w][1])
+                self.socket.send(to_send)
 
-    def send_result(socket, circuit, g_tables, pbits_out, b_inputs):
-        a_inputs      = socket.receive()
+        return self.socket.receive()
+
+    def send_result(self, circuit, g_tables, pbits_out, b_inputs):
+        """Evaluate circuit and send the result to Alice.
+
+        Args:
+            circuit: A dict containing circuit spec.
+            g_tables: Garbled tables of yao circuit.
+            pbits_out: p-bits of outputs.
+            b_inputs: A dict mapping Bob's wires to (clear) input bits.
+        """
+        # map from Alice's wires to (key, encr_bit) inputs
+        a_inputs = self.socket.receive()
+        # map from Bob's wires to (key, encr_bit) inputs
         b_inputs_encr = {}
 
+        logging.debug("Received Alice's inputs")
+
         for w, b_input in b_inputs.items():
-            socket.send(w)
-            pair = socket.receive()
-            # Bob receives the pair of keys and choose one of them
-            b_inputs_encr[w] = pair[b_input]
+            logging.debug(f"Sending gate ID {w}")
+            self.socket.send(w)
 
-        result = yao.evaluate(circuit, g_tables, pbits_out, \
-                              a_inputs, b_inputs_encr)
-        socket.send(result)
+            if self.enabled:
+                b_inputs_encr[w] = pickle.loads(self.ot_evaluator(b_input))
+            else:
+                pair = self.socket.receive()
+                logging.debug(f"Received key pair, key {b_input} selected")
+                b_inputs_encr[w] = pair[b_input]
 
-# __________________________________________________________________________
+        result = yao.evaluate(circuit, g_tables, pbits_out, a_inputs,
+                              b_inputs_encr)
+
+        logging.debug("Sending circuit evaluation")
+        self.socket.send(result)
+
+    def ot_garbler(self, msgs):
+        """Oblivious transfer, Alice's side.
+
+        Args:
+            msgs: A pair (msg1, msg2) to suggest to Bob.
+        """
+        logging.debug("OT protocol started")
+        G = util.PrimeGroup()
+        self.socket.send_wait(G)
+
+        # OT protocol based on Nigel Smart’s "Cryptography Made Simple"
+        c = G.gen_pow(G.rand_int())
+        h0 = self.socket.send_wait(c)
+        h1 = G.mul(c, G.inv(h0))
+        k = G.rand_int()
+        c1 = G.gen_pow(k)
+        e0 = util.xor_bytes(msgs[0], self.ot_hash(G.pow(h0, k), len(msgs[0])))
+        e1 = util.xor_bytes(msgs[1], self.ot_hash(G.pow(h1, k), len(msgs[1])))
+
+        self.socket.send((c1, e0, e1))
+        logging.debug("OT protocol ended")
+
+    def ot_evaluator(self, b):
+        """Oblivious transfer, Bob's side.
+
+        Args:
+            b: Bob's input bit used to select one of Alice's messages.
+
+        Returns:
+            The message selected by Bob.
+        """
+        logging.debug("OT protocol started")
+        G = self.socket.receive()
+        self.socket.send(True)
+
+        # OT protocol based on Nigel Smart’s "Cryptography Made Simple"
+        c = self.socket.receive()
+        x = G.rand_int()
+        x_pow = G.gen_pow(x)
+        h = (x_pow, G.mul(c, G.inv(x_pow)))
+        c1, e0, e1 = self.socket.send_wait(h[b])
+        e = (e0, e1)
+        ot_hash = self.ot_hash(G.pow(c1, x), len(e[b]))
+        mb = util.xor_bytes(e[b], ot_hash)
+
+        logging.debug("OT protocol ended")
+        return mb
+
+    @staticmethod
+    def ot_hash(pub_key, msg_length):
+        """Hash function for OT keys."""
+        key_length = (pub_key.bit_length() + 7) // 8  # key length in bytes
+        bytes = pub_key.to_bytes(key_length, byteorder="big")
+        return hashlib.shake_256(bytes).digest(msg_length)
