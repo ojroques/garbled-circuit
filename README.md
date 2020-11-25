@@ -63,27 +63,26 @@ the script:
 #### Local tests
 To print the truth table of a circuit:
 ```sh
-./src/main.py local -c <circuit.json>
+./main.py local -c <circuit.json>
 ```
 
 To print a clear representation of the garbled tables of a circuit:
 ```sh
-./src/main.py local -c <circuit.json> -m table
+./main.py local -c <circuit.json> -m table
 ```
 
 ## Architecture
 The project is composed of 4 python files:
 * **main.py** implements Alice side, Bob side and local tests.
 * **yao.py** implements:
-    * Encryption and decryption functions
+    * Encryption and decryption functions.
     * Evaluation function used by Bob to get the results of a yao circuit
     * `GarbledCircuit` class which generates the keys, p-bits and garbled
-      gates of the circuit
-    * `GarbledGate` class which generates the garbled table of a gate
-* **ot.py** implements the oblivious transfer protocol as well as wrappers to
-  send and receive yao circuit, inputs and results.
+      gates of the circuit.
+    * `GarbledGate` class which generates the garbled table of a gate.
+* **ot.py** implements the oblivious transfer protocol.
 * **util.py** implements many functions related to network communications and
-  asymmetric key generation
+  asymmetric key generation.
 
 A few functions converted to boolean circuits are provided in **circuits/**.
 
