@@ -105,7 +105,9 @@ A few assumptions are made:
 * The gate id is the id of the gate's output.
 
 ## Example
-Here is an example of a function represented as a json circuit:
+![smart](./figures/smart.png)
+
+Here is the json representation of above circuit:
 ```json
 {
   "name": "smart",
