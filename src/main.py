@@ -131,14 +131,12 @@ class Bob:
     def listen(self):
         """Start listening for Alice messages."""
         logging.info("Start listening")
-        while True:
-            try:
-                entry = self.socket.receive()
+        try:
+            for entry in self.socket.poll_socket():
                 self.socket.send(True)
                 self.send_evaluation(entry)
-            except KeyboardInterrupt:
-                logging.info("Stop listening")
-                break
+        except KeyboardInterrupt:
+            logging.info("Stop listening")
 
     def send_evaluation(self, entry):
         """Evaluate yao circuit for all Bob and Alice's inputs and
