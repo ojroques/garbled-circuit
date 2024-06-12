@@ -6,9 +6,10 @@ import yao
 
 
 class ObliviousTransfer:
-    def __init__(self, socket, enabled=True):
+    def __init__(self, socket, enabled=True, group=None):
         self.socket = socket
         self.enabled = enabled
+        self.group = group
 
     def get_result(self, a_inputs, b_keys):
         """Send Alice's inputs and retrieve Bob's result of evaluation.
@@ -21,7 +22,12 @@ class ObliviousTransfer:
             The result of the yao circuit evaluation.
         """
         logging.debug("Sending inputs to Bob")
-        self.socket.send(a_inputs)
+        self.socket.send_wait(a_inputs)
+
+        logging.debug("Generating prime group to use for OT")
+        self.group = self.enabled and (self.group or util.PrimeGroup())
+        logging.debug("Sending prime group")
+        self.socket.send(self.group)
 
         for _ in range(len(b_keys)):
             w = self.socket.receive()  # receive gate ID where to perform OT
@@ -50,10 +56,14 @@ class ObliviousTransfer:
         """
         # map from Alice's wires to (key, encr_bit) inputs
         a_inputs = self.socket.receive()
+        self.socket.send(True)
         # map from Bob's wires to (key, encr_bit) inputs
         b_inputs_encr = {}
 
         logging.debug("Received Alice's inputs")
+
+        self.group = self.socket.receive()
+        logging.debug("Received group to use for OT")
 
         for w, b_input in b_inputs.items():
             logging.debug(f"Sending gate ID {w}")
@@ -80,8 +90,7 @@ class ObliviousTransfer:
             msgs: A pair (msg1, msg2) to suggest to Bob.
         """
         logging.debug("OT protocol started")
-        G = util.PrimeGroup()
-        self.socket.send_wait(G)
+        G = self.group
 
         # OT protocol based on Nigel Smart’s "Cryptography Made Simple"
         c = G.gen_pow(G.rand_int())
@@ -105,8 +114,7 @@ class ObliviousTransfer:
             The message selected by Bob.
         """
         logging.debug("OT protocol started")
-        G = self.socket.receive()
-        self.socket.send(True)
+        G = self.group
 
         # OT protocol based on Nigel Smart’s "Cryptography Made Simple"
         c = self.socket.receive()
